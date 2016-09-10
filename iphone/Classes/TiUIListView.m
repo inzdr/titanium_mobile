@@ -1824,7 +1824,7 @@ static TiViewProxy * FindViewProxyWithBindIdContainingPoint(UIView *view, CGPoin
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
     //Events - pull (maybe scroll later)
-    if (![self.proxy _hasListeners:@"pull"]) {
+    if (![self.proxy _hasListeners:@"pull"] && ![self.proxy _hasListeners:@"scroll"]) {
         return;
     }
     
@@ -1837,6 +1837,14 @@ static TiViewProxy * FindViewProxyWithBindIdContainingPoint(UIView *view, CGPoin
             [self.proxy fireEvent:@"pull" withObject:[NSDictionary dictionaryWithObjectsAndKeys:NUMBOOL(pullActive),@"active",nil] withSource:self.proxy propagate:NO reportSuccess:NO errorCode:0 message:nil];
         }
     }
+    CGPoint offset = [scrollView contentOffset];
+    [self.proxy fireEvent:@"scroll" withObject:[NSDictionary dictionaryWithObjectsAndKeys:
+                                                NUMFLOAT(offset.x),@"x",
+                                                NUMFLOAT(offset.y),@"contentOffset",
+                                                NUMBOOL([scrollView isDecelerating]),@"decelerating",
+                                                NUMBOOL([scrollView isDragging]),@"dragging",
+                                                [TiUtils sizeToDictionary:scrollView.contentSize], @"contentSize",
+                                                nil]];
 }
 
 
