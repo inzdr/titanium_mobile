@@ -797,6 +797,23 @@ TI_INLINE void waitForMemoryPanicCleared();   //WARNING: This must never be run 
     [[NSNotificationCenter defaultCenter] postNotificationName:kTiURLUploadProgress object:self userInfo:dict];
 }
 
+
+-(void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask didReceiveData:(NSData *)data
+{
+    if(!uploadTaskResponses){
+        uploadTaskResponses = [[NSMutableDictionary alloc] init];
+    }
+    NSMutableDictionary *responseObj =  [uploadTaskResponses objectForKey:@(dataTask.taskIdentifier)];
+    if (!responseObj) {
+        NSMutableData * responseData = [NSMutableData dataWithData:data];
+        NSInteger statusCode = [(NSHTTPURLResponse *)[dataTask response] statusCode];
+        responseObj = [NSMutableDictionary dictionaryWithObjectsAndKeys: @(statusCode), @"statusCode",responseData, @"responseData", nil];
+        [uploadTaskResponses setValue:responseObj forKey:(NSString*)@(dataTask.taskIdentifier)];
+    } else {
+        [[responseObj objectForKey:@"responseData"] appendData:data ];
+    }
+}
+
 -(void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didCompleteWithError:(NSError *)error
 {
     //FunctionName();
@@ -811,15 +828,27 @@ TI_INLINE void waitForMemoryPanicCleared();   //WARNING: This must never be run 
     
     if (error) {
         NSDictionary * errorinfo = [NSDictionary dictionaryWithObjectsAndKeys:NUMBOOL(NO), @"success",
-                                                NUMINTEGER([error code]), @"errorCode",
-                                                [error localizedDescription], @"message",
-                                                nil];
+                                     NUMINTEGER([error code]), @"errorCode",
+                                     [error localizedDescription], @"message",
+                                     nil];
         [dict addEntriesFromDictionary:errorinfo];
     } else {
-        NSDictionary * success = [NSDictionary dictionaryWithObjectsAndKeys:NUMBOOL(YES), @"success",
-                                              NUMINT(0), @"errorCode",
-                                              @"", @"message",
-                                              nil];
+        NSMutableDictionary *responseObj = [uploadTaskResponses objectForKey:@(task.taskIdentifier)];
+        NSString *responseText = nil;
+        NSInteger  *statusCode = nil;
+        if (responseObj) {
+            //we only send responseText as this is the responsesData dictionary only gets filled with data from uploads
+            responseText = [[NSString alloc] initWithData:[responseObj objectForKey:@"responseData"] encoding:NSUTF8StringEncoding];
+            statusCode = (NSInteger*)[responseObj objectForKey:@"statusCode"];
+            
+            [uploadTaskResponses removeObjectForKey:@(task.taskIdentifier)];
+        }
+        
+        NSDictionary * success = [NSMutableDictionary dictionaryWithObjectsAndKeys:NUMBOOL(YES), @"success",
+                                   NUMINT(0), @"errorCode",
+                                   responseText,@"responseText",
+                                   statusCode,@"statusCode",
+                                   nil];
         [dict addEntriesFromDictionary:success];
     }
     [[NSNotificationCenter defaultCenter] postNotificationName:kTiURLSessionCompleted object:self userInfo:dict];
@@ -909,8 +938,8 @@ expectedTotalBytes:(int64_t)expectedTotalBytes {
 	RELEASE_TO_NIL(xhrBridge);
 #endif	
 	RELEASE_TO_NIL(remoteNotification);
-    RELEASE_TO_NIL(pendingCompletionHandlers);
-    RELEASE_TO_NIL(backgroundTransferCompletionHandlers);
+    	RELEASE_TO_NIL(pendingCompletionHandlers);
+    	RELEASE_TO_NIL(backgroundTransferCompletionHandlers);
 	RELEASE_TO_NIL(sessionId);
 }
 
@@ -1175,12 +1204,14 @@ expectedTotalBytes:(int64_t)expectedTotalBytes {
 	RELEASE_TO_NIL(remoteNotification);
 	RELEASE_TO_NIL(splashScreenImage);
 #ifndef USE_JSCORE_FRAMEWORK
-    if ([self debugMode]) {
-        TiDebuggerStop();
-    }
+    	if ([self debugMode]) {
+        	TiDebuggerStop();
+    	}
 #endif
 	RELEASE_TO_NIL(backgroundServices);
 	RELEASE_TO_NIL(localNotification);
+	RELEASE_TO_NIL(uploadTaskResponses);
+	
 	[super dealloc];
 }
 

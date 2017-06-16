@@ -56,6 +56,8 @@ TI_INLINE void waitForMemoryPanicCleared()   //WARNING: This must never be run o
 	NSMutableDictionary* pendingCompletionHandlers;
     NSMutableDictionary* pendingReplyHandlers;
     NSMutableDictionary* backgroundTransferCompletionHandlers;
+    NSMutableDictionary* uploadTaskResponses;
+
     BOOL appBooted;
     
 	NSString *sessionId;
