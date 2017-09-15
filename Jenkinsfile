@@ -134,7 +134,7 @@ timestamps {
 
 				// Skip the Windows SDK portion if a PR, we don't need it
 				stage('Windows') {
-					if (!isPR) {
+					if (isMainlineBranch) {
 						// This may be the very first build on this branch, so there's no windows build to grab yet
 						def isFirstBuildOnBranch = false
 						try {
@@ -230,8 +230,8 @@ timestamps {
 		// Run unit tests in parallel for android/iOS
 		stage('Test') {
 			parallel(
-				'android unit tests': unitTests('android', nodeVersion, targetBranch),
-				'iOS unit tests': unitTests('ios', nodeVersion, targetBranch),
+				'android unit tests': unitTests('android', nodeVersion, 'windows'),
+				'iOS unit tests': unitTests('ios', nodeVersion, 'windows'),
 				failFast: true
 			)
 		}
