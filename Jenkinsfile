@@ -182,15 +182,15 @@ timestamps {
 							sh 'node scons.js build --android-ndk /opt/android-ndk-r11c --android-sdk /opt/android-sdk'
 						} // timeout
 						ansiColor('xterm') {
-							if (isPR) {
+							// if (isPR) {
 								// For PR builds, just package android and iOS for osx
 								sh "node scons.js package android ios --version-tag ${vtag}"
-							} else {
-								// For non-PR builds, do all platforms for all OSes
-								timeout(15) {
-									sh "node scons.js package --version-tag ${vtag} --all"
-								} // timeout
-							}
+							// } else {
+							// 	// For non-PR builds, do all platforms for all OSes
+							// 	timeout(15) {
+							// 		sh "node scons.js package --version-tag ${vtag} --all"
+							// 	} // timeout
+							// }
 						} // ansiColor
 					} // dir
 					archiveArtifacts artifacts: "${basename}-*.zip"
