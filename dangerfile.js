@@ -78,6 +78,7 @@ function gatherFailedTestcases(reportPath) {
 const failedAndroidTests = gatherFailedTestcases(path.join(__dirname, 'junit.android.xml'));
 const failedIOSTests = gatherFailedTestcases(path.join(__dirname, 'junit.ios.xml'));
 const failures_and_errors = [...failedAndroidTests, ...failedIOSTests];
+
 if (failures_and_errors.length !== 0) {
 	fail('Tests have failed, see below for more information.');
 	let message = '### Tests: \n\n';
@@ -85,9 +86,10 @@ if (failures_and_errors.length !== 0) {
 		return attr.nodeName;
 	});
 	const attributes = keys.map(function (key) {
-		return key.substr(0,1).toUpperCase() + key.substr(1).toLowerCase();
+		return key.substr(0, 1).toUpperCase() + key.substr(1).toLowerCase();
 	});
 	attributes.push('Error');
+	attributes.push('Platform');
 
 	// TODO Include stderr/stdout, or full test stack too?
 	// Create the headers
@@ -113,7 +115,8 @@ if (failures_and_errors.length !== 0) {
 				row_values.push(''); // This shouldn't ever happen
 			}
 		}
-		message += '| ' + row_values.join(' | ') + ' |\n';
+		message += '| ' + row_values.join(' | ') + ' | ';
+		message += '| ' + failedAndroidTests.indexOf(test) !== -1 ? 'Android' : 'iOS' + ' |\n' 
 	});
 
 	markdown(message);
