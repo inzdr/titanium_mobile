@@ -998,7 +998,7 @@ public abstract class TiUIView
 		} else if (d.containsKey(TiC.PROPERTY_BACKGROUND_COLOR) && !nativeViewNull) {
 			bgColor = TiConvert.toColor(d, TiC.PROPERTY_BACKGROUND_COLOR);
 
-			
+
 			if (canApplyTouchFeedback(d)) {
 				applyTouchFeedback(bgColor, d.containsKey(TiC.PROPERTY_TOUCH_FEEDBACK_COLOR) ? TiConvert.toColor(d, TiC.PROPERTY_TOUCH_FEEDBACK_COLOR) : null);
 			} else {
@@ -1142,15 +1142,15 @@ public abstract class TiUIView
 
 	/**
 	 * @param props View's property dictionary
-	 * @return true if touch feedback can be applied. 
+	 * @return true if touch feedback can be applied.
 	 */
 	protected boolean canApplyTouchFeedback(@NonNull KrollDict props) {
 		return ((Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) && props.optBoolean(TiC.PROPERTY_TOUCH_FEEDBACK, false));
 	}
-	
+
 	/**
-	 * Applies touch feedback. Should check canApplyTouchFeedback() before calling this. 
-	 * @param backgroundColor The background color of the view. 
+	 * Applies touch feedback. Should check canApplyTouchFeedback() before calling this.
+	 * @param backgroundColor The background color of the view.
 	 * @param rippleColor The ripple color.
 	 */
 	private void applyTouchFeedback(@NonNull Integer backgroundColor, @Nullable Integer rippleColor) {
@@ -1522,6 +1522,20 @@ public abstract class TiUIView
 		} else {
 			data.put(TiC.EVENT_PROPERTY_SIZE, (double)0);
 		}
+
+		// phobeous
+		if (dictToCopy.containsKey("globalX")){
+			data.put("globalX", dictToCopy.get("globalX"));
+		} else {
+			data.put("globalX", (double)0);
+		}
+		if (dictToCopy.containsKey("globalY")){
+			data.put("globalY", dictToCopy.get("globalY"));
+		} else {
+			data.put("globalY", (double)0);
+		}
+		// end phobeous
+
 		data.put(TiC.EVENT_PROPERTY_SOURCE, proxy);
 		return data;
 	}
@@ -1662,7 +1676,19 @@ public abstract class TiUIView
 
 			public boolean onTouch(View view, MotionEvent event)
 			{
-				if (event.getAction() == MotionEvent.ACTION_UP) {
+				if (event.getAction() == MotionEvent.ACTION_DOWN) {
+					/*int[] location = new int[2];
+					touchable.getLocationOnScreen(location);
+					lastUpEvent.put("globalX", (double) event.getX() + location[0]);
+					lastUpEvent.put("globalY", (double) event.getY() + location[1]);
+					Log.d(TAG, "phobeous iNZDR -> eventX: " + ((double) event.getX()) + ", eventY: " + ((double) event.getY()));
+					Log.d(TAG, "phobeous iNZDR -> globalX: " + location[0] + ", globalY: " + location[1]);
+					*/
+					Log.d(TAG, "phobeous iNZDR -> eventX: " + ((double) event.getRawX()) + ", eventY: " + ((double) event.getRawY()));
+					lastUpEvent.put("globalX", (double) event.getRawX());
+					lastUpEvent.put("globalY", (double) event.getRawY());
+				}
+				else if (event.getAction() == MotionEvent.ACTION_UP) {
 					lastUpEvent.put(TiC.EVENT_PROPERTY_X, (double) event.getX());
 					lastUpEvent.put(TiC.EVENT_PROPERTY_Y, (double) event.getY());
 				}
@@ -1912,6 +1938,7 @@ public abstract class TiUIView
 				view.setOnClickListener(null); // This will set clickable to true in the view, so make sure it stays here so the next line turns it off.
 			}
 			view.setClickable(false);
+			view.setOnClickListener(null);
 			view.setOnLongClickListener(null);
 			view.setLongClickable(false);
 		} else if ( ! (view instanceof AdapterView) ) {
