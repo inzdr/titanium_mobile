@@ -1,8 +1,10 @@
 /**
  * Appcelerator Titanium Mobile
- * Copyright (c) 2009-2010 by Appcelerator, Inc. All Rights Reserved.
+ * Copyright (c) 2009-2017 by Appcelerator, Inc. All Rights Reserved.
  * Licensed under the terms of the Apache Public License
  * Please see the LICENSE included with this distribution for details.
+ *
+ * WARNING: This is generated code. Modify at your own risk and without support.
  */
 #ifdef USE_TI_UIBUTTON
 
@@ -158,6 +160,8 @@
   }
   [self setHighlighting:button.highlighted];
   NSMutableDictionary *evt = [NSMutableDictionary dictionaryWithDictionary:[TiUtils touchPropertiesToDictionary:touch andView:self]];
+  NSMutableDictionary *globalTouch = [NSMutableDictionary dictionaryWithDictionary:[TiUtils touchPropertiesToDictionary:touch andView:[UIApplication sharedApplication].keyWindow.rootViewController.view]];
+  [evt setObject:globalTouch forKey:@"globalPoint"];
   if ((fireActionEvent != nil) && [self.proxy _hasListeners:fireActionEvent]) {
     [self.proxy fireEvent:fireActionEvent withObject:evt];
   }
