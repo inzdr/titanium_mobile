@@ -95,7 +95,7 @@ public class TiHTTPClient
 	                                                  + Integer.toString(Build.VERSION.SDK_INT) + "; "
 	                                                  + TiPlatformHelper.getInstance().getLocale() +";)";
 	private static final String[] FALLBACK_CHARSETS = {"UTF_8", "ISO_8859_1"};
-	
+
 	// Regular expressions for detecting charset information in response documents (ex: html, xml).
 	private static final String HTML_META_TAG_REGEX = "charset=([^\"\']*)";
 	private static final String XML_DECLARATION_TAG_REGEX = "encoding=[\"\']([^\"\']*)[\"\']";
@@ -134,13 +134,13 @@ public class TiHTTPClient
 	private int tlsVersion = NetworkModule.TLS_DEFAULT;
 
 	private static CookieManager cookieManager = NetworkModule.getCookieManagerInstance();
-	
+
 	protected HashMap<String,String> requestHeaders = new HashMap<String,String>();
 	private ArrayList<NameValuePair> nvPairs;
 	private HashMap<String, ContentBody> parts;
-	
+
 	protected Map<String, List<String>> responseHeaders;
-	
+
 	public static final int READY_STATE_UNSENT = 0; // Unsent, open() has not yet been called
 	public static final int READY_STATE_OPENED = 1; // Opened, send() has not yet been called
 	public static final int READY_STATE_HEADERS_RECEIVED = 2; // Headers received, headers have returned and the status is available
@@ -152,7 +152,7 @@ public class TiHTTPClient
 	private TiFile responseFile;
 
 	private void handleResponse(HttpURLConnection connection) throws IOException {
-	    connected = true;	
+	    connected = true;
 
 	    long contentLength;
 
@@ -206,7 +206,7 @@ public class TiHTTPClient
 	                }
 	            }
 	        }
-	        
+
 	        // If no charset is defined, default to UTF-8
 	        if ("".equals(charset)) {
 	            charset = "UTF-8";
@@ -254,7 +254,7 @@ public class TiHTTPClient
 	        }
 	    }
 	}
-	
+
 	private TiFile createFileResponseData(boolean dumpResponseOut) throws IOException
 	{
 		TiFile tiFile = null;
@@ -291,8 +291,8 @@ public class TiHTTPClient
 		responseData = TiBlob.blobFromFile(tiFile, contentType);
 		return tiFile;
 	}
-	
-	
+
+
 	private void handleEntityData(byte[] data, int size, long totalSize, long contentLength) throws IOException
 	{
 		if (responseOut == null) {
@@ -311,17 +311,17 @@ public class TiHTTPClient
 			// to a file and re-open as a FileOutputStream w/ append
 			createFileResponseData(true);
 		}
-	
+
 		responseOut.write(data, 0, size);
-	
+
 		KrollDict callbackData = new KrollDict();
 		callbackData.put("totalCount", contentLength);
 		callbackData.put("totalSize", totalSize);
 		callbackData.put("size", size);
-	
+
 		byte[] blobData = new byte[size];
 		System.arraycopy(data, 0, blobData, 0, size);
-	
+
 		TiBlob blob = TiBlob.blobFromData(blobData, contentType);
 		callbackData.put("blob", blob);
 		double progress = ((double)totalSize)/((double)contentLength);
@@ -330,10 +330,10 @@ public class TiHTTPClient
 			progress = NetworkModule.PROGRESS_UNKNOWN;
 		}
 		callbackData.put("progress", progress);
-	
+
 		dispatchCallback(TiC.PROPERTY_ONDATASTREAM, callbackData);
 	}
-	
+
 	private void finishedReceivingEntityData(long contentLength) throws IOException
 	{
 		if (responseOut instanceof ByteArrayOutputStream) {
@@ -343,12 +343,12 @@ public class TiHTTPClient
 		responseOut.close();
 		responseOut = null;
 	}
-	
+
 	private interface ProgressListener
 	{
 		public void progress(int progress);
 	}
-	
+
 	private class ProgressOutputStream extends FilterOutputStream
 	{
 		private ProgressListener listener;
@@ -380,7 +380,7 @@ public class TiHTTPClient
 			}
 		}
 	}
-	
+
 	public TiHTTPClient(KrollProxy proxy)
 	{
 		this.proxy = proxy;
@@ -395,7 +395,7 @@ public class TiHTTPClient
 		this.maxBufferSize = TiApplication.getInstance()
 				.getAppProperties().getInt(PROPERTY_MAX_BUFFER_SIZE, DEFAULT_MAX_BUFFER_SIZE);
 	}
-	
+
 	public int getReadyState()
 	{
 		synchronized(this) {
@@ -403,7 +403,7 @@ public class TiHTTPClient
 		}
 		return readyState;
 	}
-	
+
 	public boolean validatesSecureCertificate()
 	{
 		if (proxy.hasProperty("validatesSecureCertificate")) {
@@ -417,14 +417,14 @@ public class TiHTTPClient
 		}
 		return false;
 	}
-	
+
 	/*
 	public void addAuthFactory(String scheme, AuthSchemeFactory theFactory)
 	{
 		customAuthenticators.put(scheme, theFactory);
 	}
 	*/
-	
+
 	public void setReadyState(int readyState)
 	{
 		Log.d(TAG, "Setting ready state to " + readyState, Log.DEBUG_MODE);
@@ -439,7 +439,7 @@ public class TiHTTPClient
 			dispatchCallback(TiC.PROPERTY_ONLOAD, data1);
 		}
 	}
-	
+
 	private String decodeResponseData(String charsetName) {
 		Charset charset;
 		try {
@@ -465,7 +465,7 @@ public class TiHTTPClient
 			return null;
 		}
 	}
-	
+
 	/**
 	 * Attempts to scan the response data to determine the encoding of the text.
 	 * Looks for meta information usually found in HTML or XML documents.
@@ -498,7 +498,7 @@ public class TiHTTPClient
 
 		return null;
 	}
-	
+
 	public String getResponseText()
 	{
 		if (responseText != null || responseData == null) {
@@ -537,12 +537,12 @@ public class TiHTTPClient
 		Log.e(TAG, "Could not decode response text.");
 		return responseText;
 	}
-	
+
 	public TiBlob getResponseData()
 	{
 		return responseData;
 	}
-	
+
 	public DocumentProxy getResponseXML()
 	{
 		// avoid eating up tons of memory if we have a large binary data blob
@@ -572,12 +572,12 @@ public class TiHTTPClient
 
 		return responseXml;
 	}
-	
+
 	public void setResponseText(String responseText)
 	{
 		this.responseText = responseText;
 	}
-	
+
 	public int getStatus()
 	{
 		return status;
@@ -611,14 +611,14 @@ public class TiHTTPClient
 			proxy.fireEvent(TiC.EVENT_DISPOSE_HANDLE, null);
 		}
 	}
-	
+
 	public String getAllResponseHeaders()
 	{
 		String result = "";
 		if(responseHeaders!=null && !responseHeaders.isEmpty()){
 			StringBuilder sb = new StringBuilder(256);
 			Set<Map.Entry<String, List<String>>> entrySet = responseHeaders.entrySet();
-			
+
 	        for (Map.Entry<String, List<String>> entry : entrySet) {
 	            String headerName = entry.getKey();
 	            sb.append(headerName).append(":");
@@ -631,7 +631,7 @@ public class TiHTTPClient
 		}
 		return result;
 	}
-	
+
 	public void clearCookies(String url)
 	{
 		List<HttpCookie> cookies = new ArrayList<HttpCookie>(cookieManager.getCookieStore().getCookies());
@@ -658,7 +658,7 @@ public class TiHTTPClient
 			if (value == null) {
 				// If value is null, remove header
 				requestHeaders.remove(header);
-			} else {		
+			} else {
 				if (requestHeaders.containsKey(header)){
 					// Appends a value to a header
 					// If it is a cookie, use ';'. If not, use ','.
@@ -671,12 +671,12 @@ public class TiHTTPClient
 					requestHeaders.put(header, value);
 				}
 			}
-			
+
 		} else {
 			throw new IllegalStateException("setRequestHeader can only be called before invoking send.");
 		}
 	}
-	
+
 
 	public String getResponseHeader(String getHeaderName)
 	{
@@ -685,10 +685,10 @@ public class TiHTTPClient
 			boolean firstPass = true;
 			StringBuilder sb = new StringBuilder(256);
 			Set<Map.Entry<String, List<String>>> entrySet = responseHeaders.entrySet();
-	        for (Map.Entry<String, List<String>> entry : entrySet) {	            
-	        	String headerName = entry.getKey();	            	            
+	        for (Map.Entry<String, List<String>> entry : entrySet) {
+	        	String headerName = entry.getKey();
 	        	if (headerName != null && headerName.equalsIgnoreCase(getHeaderName)) {
-	            	List<String> headerValues = entry.getValue();		            
+	            	List<String> headerValues = entry.getValue();
 	            	for (String value : headerValues) {
 		            	if (!firstPass) {
 							sb.append(", ");
@@ -700,15 +700,15 @@ public class TiHTTPClient
 	        }
 	        result = sb.toString();
 		}
-		
+
 		if (result.length() == 0) {
 			Log.w(TAG, "No value for response header: " + getHeaderName, Log.DEBUG_MODE);
 		}
-		
+
 		return result;
 	}
-	
-	
+
+
 	public void open(String method, String url)
 	{
 		Log.d(TAG, "open request method=" + method + " url=" + url, Log.DEBUG_MODE);
@@ -786,12 +786,12 @@ public class TiHTTPClient
 
 		final String username = ((HTTPClientProxy)proxy).getUsername();
 		final String password = ((HTTPClientProxy)proxy).getPassword();
-		final String domain = ((HTTPClientProxy)proxy).getDomain();	
+		final String domain = ((HTTPClientProxy)proxy).getDomain();
 
 		if ((username != null) && (password != null)) {
 		    Authenticator.setDefault(new TiAuthenticator(domain, username, password));
 		}
-		
+
 		setReadyState(READY_STATE_OPENED);
 		setRequestHeader("User-Agent", TITANIUM_USER_AGENT);
 		// Causes Auth to Fail with twitter and other size apparently block X- as well
@@ -821,12 +821,14 @@ public class TiHTTPClient
 			// so we send an empty string by default instead which will cause the
 			// StringBody to not include the content-type header. this should be
 			// harmless for all other cases
-			parts.put(name, new StringBody(value,"",null));
+			// phobeous
+			//parts.put(name, new StringBody(value,"",null));
+			parts.put(name, new StringBody(value, Charset.forName("UTF-8"))); // We use other constructor that sets content-type and force UTF-8 encoding
 		} else {
 			nvPairs.add(new NameValuePair(name, value.toString()));
 		}
 	}
-	
+
 	private void dispatchCallback(String name, KrollDict data) {
 		if (data == null) {
 			data = new KrollDict();
@@ -836,7 +838,7 @@ public class TiHTTPClient
 
 		proxy.callPropertyAsync(name, new Object[] { data });
 	}
-	
+
 	private int addTitaniumFileAsPostData(String name, Object value)
 	{
 		try {
@@ -892,7 +894,7 @@ public class TiHTTPClient
 		}
 		return 0;
 	}
-	
+
 	private void setUpSSL(boolean validating, HttpsURLConnection securedConnection)
 	{
 		SSLSocketFactory sslSocketFactory = null;
@@ -948,18 +950,18 @@ public class TiHTTPClient
 		        }
 		    }
 		}
-		
+
 		if (sslSocketFactory != null) {
 			securedConnection.setSSLSocketFactory(sslSocketFactory);
 		} else if (!validating) {
 			securedConnection.setSSLSocketFactory(new NonValidatingSSLSocketFactory());
-		} 
-		
+		}
+
 		if (!validating) {
 			securedConnection.setHostnameVerifier(new NullHostNameVerifier());
 		}
 		// Fortunately, HttpsURLConnection supports SNI since Android 2.3.
-		// We don't have to handle SNI explicitly 
+		// We don't have to handle SNI explicitly
 		// https://developer.android.com/training/articles/security-ssl.html
 	}
 
@@ -990,11 +992,11 @@ public class TiHTTPClient
 		}
 		return value;
 	}
-	
-	public void send(Object userData) throws UnsupportedEncodingException 
+
+	public void send(Object userData) throws UnsupportedEncodingException
 	{
 		aborted = false;
-		
+
 		// TODO consider using task manager
 		int totalLength = 0;
 		needMultipart = false;
@@ -1023,7 +1025,7 @@ public class TiHTTPClient
 					}
 				}
 
-				boolean queryStringAltered = false;				
+				boolean queryStringAltered = false;
 				for (String key : data.keySet()) {
 					Object value = data.get(key);
 					if (isPostOrPutOrPatch && (value != null)) {
@@ -1047,7 +1049,7 @@ public class TiHTTPClient
 						queryStringAltered = true;
 					}
 				}
-				
+
 				if (queryStringAltered) {
 					this.url = uri.toString();
 				}
@@ -1068,16 +1070,16 @@ public class TiHTTPClient
 
 		Log.d(TAG, "Instantiating http request with method='" + method + "' and this url:", Log.DEBUG_MODE);
 		Log.d(TAG, this.url, Log.DEBUG_MODE);
-		
+
 		clientThread = new Thread(new ClientRunnable(totalLength), "TiHttpClient-" + httpClientThreadCounter.incrementAndGet());
 		clientThread.setPriority(Thread.MIN_PRIORITY);
 		clientThread.start();
 
 		Log.d(TAG, "Leaving send()", Log.DEBUG_MODE);
 	}
-	
 
-	
+
+
 	private class ClientRunnable implements Runnable
 	{
 		private final int totalLength;
@@ -1104,7 +1106,7 @@ public class TiHTTPClient
 					client.getAuthSchemes().register(scheme, customAuthenticators.get(scheme));
 				}
 				*/
-				
+
 				Log.d(TAG, "Preparing to execute request", Log.DEBUG_MODE);
 
 				String result = null;
@@ -1115,7 +1117,7 @@ public class TiHTTPClient
 					boolean isPostOrPutOrPatch = method.equals("POST") || method.equals("PUT") || method.equals("PATCH");
 					setUpClient(client, isPostOrPutOrPatch);
 
-					if (isPostOrPutOrPatch) {			
+					if (isPostOrPutOrPatch) {
 						outputStream = new ProgressOutputStream(client.getOutputStream(), new ProgressListener() {
 							public void progress(int progress) {
 								KrollDict data = new KrollDict();
@@ -1126,40 +1128,40 @@ public class TiHTTPClient
 							}
 						});
 						printWriter = new PrintWriter(outputStream, true);
-						
+
 						UrlEncodedFormEntity form = null;
-						
+
 						if (nvPairs.size() > 0) {
 							try {
 								form = new UrlEncodedFormEntity(nvPairs, "UTF-8");
-	
+
 							} catch (UnsupportedEncodingException e) {
 								Log.e(TAG, "Unsupported encoding: ", e);
 							}
 						}
-						
+
 						if (parts.size() > 0 && needMultipart) {
-							
+
 							for(String name : parts.keySet()) {
 								Log.d(TAG, "adding part " + name + ", part type: " + parts.get(name).getMimeType() + ", len: "
 									+ parts.get(name).getContentLength(), Log.DEBUG_MODE);
 								addFilePart(name, parts.get(name));
 							}
-							
+
 							if (form != null) {
 								try {
 									ByteArrayOutputStream bos = new ByteArrayOutputStream((int) form.getContentLength());
 									form.writeTo(bos);
 									addFilePart("form", new StringBody(bos.toString(), "application/x-www-form-urlencoded", Charset.forName("UTF-8")));
-	
+
 								} catch (UnsupportedEncodingException e) {
 									Log.e(TAG, "Unsupported encoding: ", e);
-	
+
 								} catch (IOException e) {
 									Log.e(TAG, "Error converting form to string: ", e);
 								}
 							}
-							completeSendingMultipart();						
+							completeSendingMultipart();
 						} else {
 							handleURLEncodedData(form);
 						}
@@ -1204,7 +1206,7 @@ public class TiHTTPClient
 				    if (client != null) {
 				        client.disconnect();
 				    }
-				} 
+				}
 
 
 				if(result != null) {
@@ -1212,7 +1214,7 @@ public class TiHTTPClient
 				}
 				connected = false;
 				setResponseText(result);
-				
+
 				if (getStatus() >= 400) {
 					throw new IOException(getStatus() + " : " + getStatusText());
 				}
@@ -1244,7 +1246,7 @@ public class TiHTTPClient
 				deleteTmpFiles();
 
 				//Clean up client and clientThread
-				
+
 				client = null;
 				clientThread = null;
 
@@ -1254,7 +1256,7 @@ public class TiHTTPClient
 			}
 
 		}
-		
+
 		protected void setUpClient(HttpURLConnection client, Boolean isPostOrPutOrPatch) throws ProtocolException {
 		    client.setInstanceFollowRedirects(autoRedirect);
 		    if (client instanceof HttpsURLConnection) {
@@ -1319,16 +1321,16 @@ public class TiHTTPClient
 	    	contentBody.writeTo(outputStream);
 
 	    	printWriter.append(LINE_FEED);
-	    	printWriter.flush();    
+	    	printWriter.flush();
 
 	    }
-	 	    
+
 	    public void completeSendingMultipart() throws IOException {
 	        printWriter.append("--" + boundary + "--").append(LINE_FEED);
 	        printWriter.close();
-	 
+
 	    }
-	    
+
 		private void handleURLEncodedData(UrlEncodedFormEntity form) throws IOException
 		{
 			//If set rawDate is set with a String, need to do this
@@ -1346,15 +1348,15 @@ public class TiHTTPClient
 			} else {
 				entity = form;
 			}
-			
+
 			//This code sets the content type from the headers
 			//Then casts the request so that it can put in the form which is the entity.
-			
+
 			if (entity != null) {
 		    	entity.writeTo(outputStream);
-		    	printWriter.flush();   
+		    	printWriter.flush();
 			}
-			
+
 		}
 	}
 
@@ -1369,7 +1371,7 @@ public class TiHTTPClient
 		}
 		tmpFiles.clear();
 	}
-	
+
 	public String getLocation()
 	{
 		if (redirectedLocation != null) {
