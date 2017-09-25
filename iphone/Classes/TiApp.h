@@ -41,37 +41,38 @@ TI_INLINE void waitForMemoryPanicCleared() //WARNING: This must never be run on 
   XHRBridge *xhrBridge;
 #endif
 
-  NSMutableDictionary *launchOptions;
-  NSTimeInterval started;
+	NSMutableDictionary *launchOptions;
+	NSTimeInterval started;
 
-  int32_t networkActivityCount;
+	int32_t networkActivityCount;
 
-  TiRootViewController *controller;
-  NSString *userAgent;
-  NSString *remoteDeviceUUID;
+	TiRootViewController *controller;
+	NSString *userAgent;
+	NSString *remoteDeviceUUID;
 
-  id remoteNotificationDelegate;
-  NSDictionary *remoteNotification;
-  NSMutableDictionary *pendingCompletionHandlers;
-  NSMutableDictionary *pendingReplyHandlers;
-  NSMutableDictionary *backgroundTransferCompletionHandlers;
-  NSMutableDictionary *queuedBootEvents;
-  BOOL appBooted;
+	id remoteNotificationDelegate;
+	NSDictionary *remoteNotification;
+	NSMutableDictionary *pendingCompletionHandlers;
+	NSMutableDictionary *pendingReplyHandlers;
+	NSMutableDictionary *backgroundTransferCompletionHandlers;
+	NSMutableDictionary *queuedBootEvents;
+    NSMutableDictionary* uploadTaskResponses;
+	BOOL appBooted;
 
-  NSString *sessionId;
+	NSString *sessionId;
 
-  UIBackgroundTaskIdentifier bgTask;
-  NSMutableArray *backgroundServices;
-  NSMutableArray *runningServices;
-  NSDictionary *localNotification;
-  UIApplicationShortcutItem *launchedShortcutItem;
+	UIBackgroundTaskIdentifier bgTask;
+	NSMutableArray *backgroundServices;
+	NSMutableArray *runningServices;
+	NSDictionary *localNotification;
+	UIApplicationShortcutItem *launchedShortcutItem;
 }
 
 @property (nonatomic) BOOL forceSplashAsSnapshot;
 
 /**
  Returns application's primary window.
- 
+
  Convenience method to access the application's primary window
  */
 @property (nonatomic, retain) IBOutlet UIWindow *window;
@@ -83,14 +84,14 @@ TI_INLINE void waitForMemoryPanicCleared() //WARNING: This must never be run on 
 
 /**
  Returns details for the last remote notification.
- 
+
  Dictionary containing details about remote notification, or _nil_.
  */
 @property (nonatomic, readonly) NSDictionary *remoteNotification;
 
 /**
  Returns local notification that has bees sent on the application.
- 
+
  @return Dictionary containing details about local notification, or _nil_.
  */
 
@@ -131,7 +132,7 @@ TI_INLINE void waitForMemoryPanicCleared() //WARNING: This must never be run on 
 
 /**
  Returns application launch options
- 
+
  The method provides access to application launch options that became available when application just launched.
  @return The launch options dictionary.
  */
@@ -139,14 +140,14 @@ TI_INLINE void waitForMemoryPanicCleared() //WARNING: This must never be run on 
 
 /**
  Returns remote UUID for the current running device.
- 
+
  @return Current device UUID.
  */
 - (NSString *)remoteDeviceUUID;
 
 /**
  Tells application to show network activity indicator.
- 
+
  Every call of startNetwork should be paired with <stopNetwork>.
  @see stopNetwork
  */
@@ -154,7 +155,7 @@ TI_INLINE void waitForMemoryPanicCleared() //WARNING: This must never be run on 
 
 /**
  Tells application to hide network activity indicator.
- 
+
  Every call of stopNetwork should have corresponding <startNetwork> call.
  @see startNetwork
  */
@@ -173,7 +174,7 @@ TI_INLINE void waitForMemoryPanicCleared() //WARNING: This must never be run on 
 
 /**
  Tells application to display modal view controller.
- 
+
  @param controller The view controller to display.
  @param animated If _YES_, animates the view controller as it’s presented; otherwise, does not.
  */
@@ -181,7 +182,7 @@ TI_INLINE void waitForMemoryPanicCleared() //WARNING: This must never be run on 
 
 /**
  Tells application to hide modal view controller.
- 
+
  @param controller The view controller to hide.
  @param animated If _YES_, animates the view controller as it’s hidden; otherwise, does not.
  */
@@ -189,7 +190,7 @@ TI_INLINE void waitForMemoryPanicCleared() //WARNING: This must never be run on 
 
 /**
  Returns unique identifier for the current application launch.
- 
+
  @return Current session id.
  */
 - (NSString *)sessionId;
