@@ -1929,20 +1929,28 @@ static TiViewProxy *FindViewProxyWithBindIdContainingPoint(UIView *view, CGPoint
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
-  //Events - pull (maybe scroll later)
-  if (![self.proxy _hasListeners:@"pull"]) {
-    return;
-  }
-
-  if ((_pullViewProxy != nil) && ([scrollView isTracking])) {
-    if ((scrollView.contentOffset.y < pullThreshhold) && (pullActive == NO)) {
-      pullActive = YES;
-      [self.proxy fireEvent:@"pull" withObject:[NSDictionary dictionaryWithObjectsAndKeys:NUMBOOL(pullActive), @"active", nil] withSource:self.proxy propagate:NO reportSuccess:NO errorCode:0 message:nil];
-    } else if ((scrollView.contentOffset.y > pullThreshhold) && (pullActive == YES)) {
-      pullActive = NO;
-      [self.proxy fireEvent:@"pull" withObject:[NSDictionary dictionaryWithObjectsAndKeys:NUMBOOL(pullActive), @"active", nil] withSource:self.proxy propagate:NO reportSuccess:NO errorCode:0 message:nil];
+    //Events - pull (maybe scroll later)
+    if (![self.proxy _hasListeners:@"pull"] && ![self.proxy _hasListeners:@"scroll"]) {
+        return;
     }
-  }
+
+    if ( (_pullViewProxy != nil) && ([scrollView isTracking]) ) {
+        if ( (scrollView.contentOffset.y < pullThreshhold) && (pullActive == NO) ) {
+            pullActive = YES;
+            [self.proxy fireEvent:@"pull" withObject:[NSDictionary dictionaryWithObjectsAndKeys:NUMBOOL(pullActive),@"active",nil] withSource:self.proxy propagate:NO reportSuccess:NO errorCode:0 message:nil];
+        } else if ( (scrollView.contentOffset.y > pullThreshhold) && (pullActive == YES) ) {
+            pullActive = NO;
+            [self.proxy fireEvent:@"pull" withObject:[NSDictionary dictionaryWithObjectsAndKeys:NUMBOOL(pullActive),@"active",nil] withSource:self.proxy propagate:NO reportSuccess:NO errorCode:0 message:nil];
+        }
+    }
+    CGPoint offset = [scrollView contentOffset];
+    [self.proxy fireEvent:@"scroll" withObject:[NSDictionary dictionaryWithObjectsAndKeys:
+                                                NUMFLOAT(offset.x),@"x",
+                                                NUMFLOAT(offset.y),@"contentOffset",
+                                                NUMBOOL([scrollView isDecelerating]),@"decelerating",
+                                                NUMBOOL([scrollView isDragging]),@"dragging",
+                                                [TiUtils sizeToDictionary:scrollView.contentSize], @"contentSize",
+                                                nil]];
 }
 
 // For now, this is fired on `scrollstart` and `scrollend`

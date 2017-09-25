@@ -780,15 +780,58 @@ TI_INLINE void waitForMemoryPanicCleared(); //WARNING: This must never be run on
   [[NSNotificationCenter defaultCenter] postNotificationName:kTiURLUploadProgress object:self userInfo:dict];
 }
 
-- (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didCompleteWithError:(NSError *)error
+-(void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask didReceiveData:(NSData *)data
 {
-  NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithObjectsAndKeys:
-                                                       [NSNumber numberWithUnsignedInteger:task.taskIdentifier], @"taskIdentifier",
-                                                   nil];
+    if(!uploadTaskResponses){
+        uploadTaskResponses = [[NSMutableDictionary alloc] init];
+    }
+    NSMutableDictionary *responseObj =  [uploadTaskResponses objectForKey:@(dataTask.taskIdentifier)];
+    if (!responseObj) {
+        NSMutableData * responseData = [NSMutableData dataWithData:data];
+        NSInteger statusCode = [(NSHTTPURLResponse *)[dataTask response] statusCode];
+        responseObj = [NSMutableDictionary dictionaryWithObjectsAndKeys: @(statusCode), @"statusCode",responseData, @"responseData", nil];
+        [uploadTaskResponses setValue:responseObj forKey:(NSString*)@(dataTask.taskIdentifier)];
+    } else {
+        [[responseObj objectForKey:@"responseData"] appendData:data ];
+    }
+}
 
-  if (session.configuration.identifier) {
-    [dict setObject:session.configuration.identifier forKey:@"sessionIdentifier"];
-  }
+-(void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didCompleteWithError:(NSError *)error
+{
+    NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithObjectsAndKeys:
+                                 [NSNumber numberWithUnsignedInteger:task.taskIdentifier], @"taskIdentifier",
+                          nil];
+
+    if (session.configuration.identifier) {
+        [dict setObject:session.configuration.identifier forKey:@"sessionIdentifier"];
+    }
+
+    if (error) {
+        NSDictionary * errorinfo = [NSDictionary dictionaryWithObjectsAndKeys:NUMBOOL(NO), @"success",
+                                     NUMINTEGER([error code]), @"errorCode",
+                                     [error localizedDescription], @"message",
+                                     nil];
+        [dict addEntriesFromDictionary:errorinfo];
+    } else {
+        NSMutableDictionary *responseObj = [uploadTaskResponses objectForKey:@(task.taskIdentifier)];
+        NSString *responseText = nil;
+        NSInteger  *statusCode = nil;
+        if (responseObj) {
+            //we only send responseText as this is the responsesData dictionary only gets filled with data from uploads
+            responseText = [[NSString alloc] initWithData:[responseObj objectForKey:@"responseData"] encoding:NSUTF8StringEncoding];
+            statusCode = (NSInteger*)[responseObj objectForKey:@"statusCode"];
+
+            [uploadTaskResponses removeObjectForKey:@(task.taskIdentifier)];
+        }
+
+        NSDictionary * success = [NSMutableDictionary dictionaryWithObjectsAndKeys:NUMBOOL(YES), @"success",
+                                   NUMINT(0), @"errorCode",
+                                   responseText,@"responseText",
+                                   statusCode,@"statusCode",
+                                   nil];
+        [dict addEntriesFromDictionary:success];
+    }
+    [[NSNotificationCenter defaultCenter] postNotificationName:kTiURLSessionCompleted object:self userInfo:dict];
 
   if (error) {
     NSDictionary *errorinfo = [NSDictionary dictionaryWithObjectsAndKeys:NUMBOOL(NO), @"success",
@@ -831,7 +874,7 @@ TI_INLINE void waitForMemoryPanicCleared(); //WARNING: This must never be run on
   CGFloat timeLeft = [[UIApplication sharedApplication] backgroundTimeRemaining] - 1.0;
   /*
 	 *	In the extreme edge case of having come back to the app while
-	 *	it's still waiting for Kroll Processing, 
+	 *	it's still waiting for Kroll Processing,
 	 *	backgroundTimeRemaining becomes undefined, and so we have
 	 *	to limit the time left to a sane number in that case.
 	 *	The other reason for the timeLeft limit is to not starve
@@ -1151,9 +1194,11 @@ TI_INLINE void waitForMemoryPanicCleared(); //WARNING: This must never be run on
     TiDebuggerStop();
   }
 #endif
-  RELEASE_TO_NIL(backgroundServices);
-  RELEASE_TO_NIL(localNotification);
-  [super dealloc];
+	RELEASE_TO_NIL(backgroundServices);
+	RELEASE_TO_NIL(localNotification);
+	RELEASE_TO_NIL(uploadTaskResponses);
+
+	[super dealloc];
 }
 
 - (NSString *)systemUserAgent
