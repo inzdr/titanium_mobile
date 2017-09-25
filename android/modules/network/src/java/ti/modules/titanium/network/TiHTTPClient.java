@@ -691,14 +691,10 @@ public class TiHTTPClient
 	{
 		if (readyState > READY_STATE_UNSENT && readyState < READY_STATE_DONE) {
 			aborted = true;
-
-			try {
-				if (client != null) {
-					client.disconnect();
-				}
-			} catch (Exception ex) {
+			if (client != null) {
+				client.disconnect();
+				client = null;
 			}
-
 			// Fire the disposehandle event if the request is aborted.
 			// And it will dispose the handle of the httpclient in the JS.
 			proxy.fireEvent(TiC.EVENT_DISPOSE_HANDLE, null);
@@ -710,7 +706,7 @@ public class TiHTTPClient
 		String result = "";
 		if (responseHeaders != null && !responseHeaders.isEmpty()) {
 			StringBuilder sb = new StringBuilder(256);
-			Set<Map.Entry<String, List<String>>> entrySet = responseHeaders.entrySet();
+			Set < Map.Entry < String, List<String>>> entrySet = responseHeaders.entrySet();
 
 			for (Map.Entry<String, List<String>> entry : entrySet) {
 				String headerName = entry.getKey();
@@ -776,7 +772,7 @@ public class TiHTTPClient
 		if (responseHeaders != null && !responseHeaders.isEmpty()) {
 			boolean firstPass = true;
 			StringBuilder sb = new StringBuilder(256);
-			Set<Map.Entry<String, List<String>>> entrySet = responseHeaders.entrySet();
+			Set < Map.Entry < String, List<String>>> entrySet = responseHeaders.entrySet();
 			for (Map.Entry<String, List<String>> entry : entrySet) {
 				String headerName = entry.getKey();
 				if (headerName != null && headerName.equalsIgnoreCase(getHeaderName)) {
@@ -914,7 +910,13 @@ public class TiHTTPClient
 			// so we send an empty string by default instead which will cause the
 			// StringBody to not include the content-type header. this should be
 			// harmless for all other cases
-			parts.put(name, new StringBody(value, "", null));
+			// phobeous@iNZDR (2017/05/03): This is causing issue #154 (text aren't processed by server)
+			//parts.put(name, new StringBody(value,"",null));
+			parts.put(
+				name,
+				new StringBody(
+					value, Charset.forName(
+							   "UTF-8"))); // We use other constructor that sets content-type and force UTF-8 encoding
 		} else {
 			nvPairs.add(new NameValuePair(name, value.toString()));
 		}
@@ -955,7 +957,14 @@ public class TiHTTPClient
 				String mimeType = blob.getMimeType();
 				File tmpFile =
 					File.createTempFile("tixhr", "." + TiMimeTypeHelper.getFileExtensionFromMimeType(mimeType, "txt"));
-				createFileFromBlob(blob, tmpFile);
+				if (blob.getType() == TiBlob.TYPE_STREAM_BASE64) {
+					FileOutputStream fos = new FileOutputStream(tmpFile);
+					TiBaseFile.copyStream(blob.getInputStream(),
+										  new Base64OutputStream(fos, android.util.Base64.DEFAULT));
+					fos.close();
+				} else {
+					createFileFromBlob(blob, tmpFile);
+				}
 
 				tmpFiles.add(tmpFile);
 
@@ -1364,10 +1373,7 @@ public class TiHTTPClient
 			} catch (Throwable t) {
 				if (client != null) {
 					Log.d(TAG, "clearing the expired and idle connections", Log.DEBUG_MODE);
-					try {
-						client.disconnect();
-					} catch (Exception ex) {
-					}
+					client.disconnect();
 				} else {
 					Log.d(TAG, "client is not valid, unable to clear expired and idle connections");
 				}
