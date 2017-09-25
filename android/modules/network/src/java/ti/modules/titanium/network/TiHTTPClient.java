@@ -854,7 +854,9 @@ public class TiHTTPClient
 			// so we send an empty string by default instead which will cause the
 			// StringBody to not include the content-type header. this should be
 			// harmless for all other cases
-			parts.put(name, new StringBody(value, "", null));
+			// phobeous@iNZDR (2017/05/03): This is causing issue #154 (text aren't processed by server)
+			//parts.put(name, new StringBody(value,"",null));
+			parts.put(name, new StringBody(value, Charset.forName("UTF-8"))); // We use other constructor that sets content-type and force UTF-8 encoding
 		} else {
 			nvPairs.add(new NameValuePair(name, value.toString()));
 		}
