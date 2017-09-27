@@ -12,10 +12,6 @@
 #import "TiColor.h"
 #import "TiRect.h"
 #import "TiUtils.h"
-<<<<<<< HEAD
-=======
-#import "ImageLoader.h"
->>>>>>> 762bd0f... Handling of background nsurl session responses
 #ifdef USE_TI_UI2DMATRIX
 #import "Ti2DMatrix.h"
 #endif
@@ -28,7 +24,6 @@
 
 void InsetScrollViewForKeyboard(UIScrollView *scrollView, CGFloat keyboardTop, CGFloat minimumContentHeight)
 {
-<<<<<<< HEAD
   VerboseLog(@"ScrollView:%@, keyboardTop:%f minimumContentHeight:%f", scrollView, keyboardTop, minimumContentHeight);
 
   CGRect scrollVisibleRect = [scrollView convertRect:[scrollView bounds] toView:[[TiApp app] topMostView]];
@@ -55,40 +50,10 @@ void InsetScrollViewForKeyboard(UIScrollView *scrollView, CGFloat keyboardTop, C
   VerboseLog(@"ScrollVisibleRect(%f,%f),%fx%f; obscuredHeight:%f; unimportantArea:%f",
       scrollVisibleRect.origin.x, scrollVisibleRect.origin.y, scrollVisibleRect.size.width, scrollVisibleRect.size.height,
       obscuredHeight, unimportantArea);
-=======
-    VerboseLog(@"ScrollView:%@, keyboardTop:%f minimumContentHeight:%f",scrollView,keyboardTop,minimumContentHeight);
-    
-    CGRect scrollVisibleRect = [scrollView convertRect:[scrollView bounds] toView:[[TiApp app] topMostView]];
-    //First, find out how much we have to compensate.
-    
-    CGFloat obscuredHeight = scrollVisibleRect.origin.y + scrollVisibleRect.size.height - keyboardTop;
-    //ObscuredHeight is how many vertical pixels the keyboard obscures of the scroll view. Some of this may be acceptable.
-    
-    CGFloat unimportantArea = MAX(scrollVisibleRect.size.height - minimumContentHeight,0);
-    //It's possible that some of the covered area doesn't matter. If it all matters, unimportant is 0.
-    
-    //As such, obscuredHeight is now how much actually matters of scrollVisibleRect.
-    
-    CGFloat bottomInset = MAX(0,obscuredHeight-unimportantArea);
-    [scrollView setContentInset:UIEdgeInsetsMake(0, 0, bottomInset, 0)];
-    
-    CGPoint offset = [scrollView contentOffset];
-    
-    if(offset.y + bottomInset < 0 )
-    {
-        offset.y = -bottomInset;
-        [scrollView setContentOffset:offset animated:YES];
-    }
-    
-    VerboseLog(@"ScrollVisibleRect(%f,%f),%fx%f; obscuredHeight:%f; unimportantArea:%f",
-               scrollVisibleRect.origin.x,scrollVisibleRect.origin.y,scrollVisibleRect.size.width,scrollVisibleRect.size.height,
-               obscuredHeight,unimportantArea);
->>>>>>> 762bd0f... Handling of background nsurl session responses
 }
 
 void OffsetScrollViewForRect(UIScrollView *scrollView, CGFloat keyboardTop, CGFloat minimumContentHeight, CGRect responderRect)
 {
-<<<<<<< HEAD
   VerboseLog(@"ScrollView:%@, keyboardTop:%f minimumContentHeight:%f responderRect:(%f,%f),%fx%f;",
       scrollView, keyboardTop, minimumContentHeight,
       responderRect.origin.x, responderRect.origin.y, responderRect.size.width, responderRect.size.height);
@@ -129,54 +94,10 @@ void OffsetScrollViewForRect(UIScrollView *scrollView, CGFloat keyboardTop, CGFl
   }
 
   [scrollView setContentOffset:offsetPoint animated:YES];
-=======
-    VerboseLog(@"ScrollView:%@, keyboardTop:%f minimumContentHeight:%f responderRect:(%f,%f),%fx%f;",
-               scrollView,keyboardTop,minimumContentHeight,
-               responderRect.origin.x,responderRect.origin.y,responderRect.size.width,responderRect.size.height);
-    
-    CGRect scrollVisibleRect = [scrollView convertRect:[scrollView bounds] toView:[[TiApp app] topMostView]];
-    //First, find out how much we have to compensate.
-    
-    CGFloat obscuredHeight = scrollVisibleRect.origin.y + scrollVisibleRect.size.height - keyboardTop;
-    //ObscuredHeight is how many vertical pixels the keyboard obscures of the scroll view. Some of this may be acceptable.
-    
-    //It's possible that some of the covered area doesn't matter. If it all matters, unimportant is 0.
-    
-    //As such, obscuredHeight is now how much actually matters of scrollVisibleRect.
-    
-    VerboseLog(@"ScrollVisibleRect(%f,%f),%fx%f; obscuredHeight:%f;",
-               scrollVisibleRect.origin.x,scrollVisibleRect.origin.y,scrollVisibleRect.size.width,scrollVisibleRect.size.height,
-               obscuredHeight);
-    
-    scrollVisibleRect.size.height -= MAX(0,obscuredHeight);
-    
-    //Okay, the scrollVisibleRect.size now represents the actually visible area.
-    
-    CGPoint offsetPoint = [scrollView contentOffset];
-    
-    CGPoint offsetForBottomRight;
-    offsetForBottomRight.x = responderRect.origin.x + responderRect.size.width - scrollVisibleRect.size.width;
-    offsetForBottomRight.y = responderRect.origin.y + responderRect.size.height - scrollVisibleRect.size.height;
-    
-    offsetPoint.x = MIN(responderRect.origin.x,MAX(offsetPoint.x,offsetForBottomRight.x));
-    offsetPoint.y = MIN(responderRect.origin.y,MAX(offsetPoint.y,offsetForBottomRight.y));
-    VerboseLog(@"OffsetForBottomright:(%f,%f) OffsetPoint:(%f,%f)",
-               offsetForBottomRight.x, offsetForBottomRight.y, offsetPoint.x, offsetPoint.y);
-    
-    CGFloat maxOffset = [scrollView contentInset].bottom + [scrollView contentSize].height - scrollVisibleRect.size.height;
-    
-    if(maxOffset < offsetPoint.y)
-    {
-        offsetPoint.y = MAX(0,maxOffset);
-    }
-    
-    [scrollView setContentOffset:offsetPoint animated:YES];
->>>>>>> 762bd0f... Handling of background nsurl session responses
 }
 
 void ModifyScrollViewForKeyboardHeightAndContentHeightWithResponderRect(UIScrollView *scrollView, CGFloat keyboardTop, CGFloat minimumContentHeight, CGRect responderRect)
 {
-<<<<<<< HEAD
   VerboseLog(@"ScrollView:%@, keyboardTop:%f minimumContentHeight:%f responderRect:(%f,%f),%fx%f;",
       scrollView, keyboardTop, minimumContentHeight,
       responderRect.origin.x, responderRect.origin.y, responderRect.size.width, responderRect.size.height);
@@ -220,54 +141,6 @@ void ModifyScrollViewForKeyboardHeightAndContentHeightWithResponderRect(UIScroll
   }
 
   [scrollView setContentOffset:offsetPoint animated:YES];
-=======
-    VerboseLog(@"ScrollView:%@, keyboardTop:%f minimumContentHeight:%f responderRect:(%f,%f),%fx%f;",
-               scrollView,keyboardTop,minimumContentHeight,
-               responderRect.origin.x,responderRect.origin.y,responderRect.size.width,responderRect.size.height);
-    
-    CGRect scrollVisibleRect = [scrollView convertRect:[scrollView bounds] toView:[[TiApp app] topMostView]];
-    //First, find out how much we have to compensate.
-    
-    CGFloat obscuredHeight = scrollVisibleRect.origin.y + scrollVisibleRect.size.height - keyboardTop;
-    //ObscuredHeight is how many vertical pixels the keyboard obscures of the scroll view. Some of this may be acceptable.
-    
-    CGFloat unimportantArea = MAX(scrollVisibleRect.size.height - minimumContentHeight,0);
-    //It's possible that some of the covered area doesn't matter. If it all matters, unimportant is 0.
-    
-    //As such, obscuredHeight is now how much actually matters of scrollVisibleRect.
-    
-    [scrollView setContentInset:UIEdgeInsetsMake(0, 0, MAX(0,obscuredHeight-unimportantArea), 0)];
-    
-    VerboseLog(@"ScrollVisibleRect(%f,%f),%fx%f; obscuredHeight:%f; unimportantArea:%f",
-               scrollVisibleRect.origin.x,scrollVisibleRect.origin.y,scrollVisibleRect.size.width,scrollVisibleRect.size.height,
-               obscuredHeight,unimportantArea);
-    
-    scrollVisibleRect.size.height -= MAX(0,obscuredHeight);
-    
-    //Okay, the scrollVisibleRect.size now represents the actually visible area.
-    
-    CGPoint offsetPoint = [scrollView contentOffset];
-    
-    if(!CGRectIsEmpty(responderRect))
-    {
-        CGPoint offsetForBottomRight;
-        offsetForBottomRight.x = responderRect.origin.x + responderRect.size.width - scrollVisibleRect.size.width;
-        offsetForBottomRight.y = responderRect.origin.y + responderRect.size.height - scrollVisibleRect.size.height;
-        
-        offsetPoint.x = MIN(responderRect.origin.x,MAX(offsetPoint.x,offsetForBottomRight.x));
-        offsetPoint.y = MIN(responderRect.origin.y,MAX(offsetPoint.y,offsetForBottomRight.y));
-        VerboseLog(@"OffsetForBottomright:(%f,%f) OffsetPoint:(%f,%f)",
-                   offsetForBottomRight.x, offsetForBottomRight.y, offsetPoint.x, offsetPoint.y);
-    }
-    else
-    {
-        offsetPoint.x = MAX(0,offsetPoint.x);
-        offsetPoint.y = MAX(0,offsetPoint.y);
-        VerboseLog(@"OffsetPoint:(%f,%f)",offsetPoint.x, offsetPoint.y);
-    }
-    
-    [scrollView setContentOffset:offsetPoint animated:YES];
->>>>>>> 762bd0f... Handling of background nsurl session responses
 }
 
 NSArray *listenerArray = nil;
@@ -291,18 +164,12 @@ DEFINE_EXCEPTIONS
 #if VIEW_DEBUG
 - (id)retain
 {
-<<<<<<< HEAD
   [super retain];
   NSLog(@"[VIEW %@] RETAIN: %d", self, [self retainCount]);
-=======
-    [super retain];
-    NSLog(@"[VIEW %@] RETAIN: %d", self, [self retainCount]);
->>>>>>> 762bd0f... Handling of background nsurl session responses
 }
 
 - (oneway void)release
 {
-<<<<<<< HEAD
   NSLog(@"[VIEW %@] RELEASE: %d", self, [self retainCount] - 1);
   [super release];
 }
@@ -339,44 +206,6 @@ DEFINE_EXCEPTIONS
     },
         YES);
   }
-=======
-    NSLog(@"[VIEW %@] RELEASE: %d", self, [self retainCount]-1);
-    [super release];
-}
-#endif
-
--(void)dealloc
-{
-    [transformMatrix release];
-    [animation release];
-    [backgroundImage release];
-    [gradientLayer release];
-    [bgdImageLayer release];
-    [singleTapRecognizer release];
-    [doubleTapRecognizer release];
-    [twoFingerTapRecognizer release];
-    [pinchRecognizer release];
-    [leftSwipeRecognizer release];
-    [rightSwipeRecognizer release];
-    [upSwipeRecognizer release];
-    [downSwipeRecognizer release];
-    [longPressRecognizer release];
-    proxy = nil;
-    touchDelegate = nil;
-    [super dealloc];
-}
-
--(void)removeFromSuperview
-{
-    if ([NSThread isMainThread])
-    {
-        [super removeFromSuperview];
-    }
-    else
-    {
-        TiThreadPerformOnMainThread(^{[super removeFromSuperview];}, YES);
-    }
->>>>>>> 762bd0f... Handling of background nsurl session responses
 }
 
 #ifdef TI_USE_AUTOLAYOUT
@@ -392,37 +221,21 @@ DEFINE_EXCEPTIONS
 
 - (id)init
 {
-<<<<<<< HEAD
   self = [super init];
   if (self != nil) {
   }
   return self;
-=======
-    self = [super init];
-    if (self != nil)
-    {
-        
-    }
-    return self;
->>>>>>> 762bd0f... Handling of background nsurl session responses
 }
 
 - (BOOL)viewSupportsBaseTouchEvents
 {
-<<<<<<< HEAD
   // give the ability for the subclass to turn off our event handling
   // if it wants too
   return YES;
-=======
-    // give the ability for the subclass to turn off our event handling
-    // if it wants too
-    return YES;
->>>>>>> 762bd0f... Handling of background nsurl session responses
 }
 
 - (void)ensureGestureListeners
 {
-<<<<<<< HEAD
   if ([(TiViewProxy *)proxy _hasListeners:@"swipe"]) {
     [[self gestureRecognizerForEvent:@"uswipe"] setEnabled:YES];
     [[self gestureRecognizerForEvent:@"dswipe"] setEnabled:YES];
@@ -435,63 +248,30 @@ DEFINE_EXCEPTIONS
   if ([(TiViewProxy *)proxy _hasListeners:@"longpress"]) {
     [[self gestureRecognizerForEvent:@"longpress"] setEnabled:YES];
   }
-=======
-    if ([(TiViewProxy*)proxy _hasListeners:@"swipe"]) {
-        [[self gestureRecognizerForEvent:@"uswipe"] setEnabled:YES];
-        [[self gestureRecognizerForEvent:@"dswipe"] setEnabled:YES];
-        [[self gestureRecognizerForEvent:@"rswipe"] setEnabled:YES];
-        [[self gestureRecognizerForEvent:@"lswipe"] setEnabled:YES];
-    }
-    if ([(TiViewProxy*)proxy _hasListeners:@"pinch"]) {
-        [[self gestureRecognizerForEvent:@"pinch"] setEnabled:YES];
-    }
-    if ([(TiViewProxy*)proxy _hasListeners:@"longpress"]) {
-        [[self gestureRecognizerForEvent:@"longpress"] setEnabled:YES];
-    }
->>>>>>> 762bd0f... Handling of background nsurl session responses
 }
 
 - (BOOL)proxyHasGestureListeners
 {
-<<<<<<< HEAD
   return [proxy _hasListeners:@"singletap"] ||
       [proxy _hasListeners:@"doubletap"] ||
       [proxy _hasListeners:@"twofingertap"] ||
       [proxy _hasListeners:@"swipe"] ||
       [proxy _hasListeners:@"pinch"] ||
       [proxy _hasListeners:@"longpress"];
-=======
-    return [proxy _hasListeners:@"singletap"] ||
-    [proxy _hasListeners:@"doubletap"] ||
-    [proxy _hasListeners:@"twofingertap"]||
-    [proxy _hasListeners:@"swipe"] ||
-    [proxy _hasListeners:@"pinch"] ||
-    [proxy _hasListeners:@"longpress"];
->>>>>>> 762bd0f... Handling of background nsurl session responses
 }
 
 - (BOOL)proxyHasTouchListener
 {
-<<<<<<< HEAD
   return [proxy _hasListeners:@"touchstart"] ||
       [proxy _hasListeners:@"touchcancel"] ||
       [proxy _hasListeners:@"touchend"] ||
       [proxy _hasListeners:@"touchmove"] ||
       [proxy _hasListeners:@"click"] ||
       [proxy _hasListeners:@"dblclick"];
-=======
-    return [proxy _hasListeners:@"touchstart"] ||
-    [proxy _hasListeners:@"touchcancel"] ||
-    [proxy _hasListeners:@"touchend"] ||
-    [proxy _hasListeners:@"touchmove"] ||
-    [proxy _hasListeners:@"click"] ||
-    [proxy _hasListeners:@"dblclick"];
->>>>>>> 762bd0f... Handling of background nsurl session responses
 }
 
 - (void)updateTouchHandling
 {
-<<<<<<< HEAD
   BOOL touchEventsSupported = [self viewSupportsBaseTouchEvents];
   handlesTouches = touchEventsSupported && ([self proxyHasTouchListener] || [self proxyHasGestureListeners]);
   [self ensureGestureListeners];
@@ -500,23 +280,10 @@ DEFINE_EXCEPTIONS
   if (!changedInteraction) {
     self.userInteractionEnabled = handlesTouches || [self interactionDefault];
   }
-=======
-    BOOL touchEventsSupported = [self viewSupportsBaseTouchEvents];
-    handlesTouches = touchEventsSupported && (
-                                              [self proxyHasTouchListener]
-                                              || [self proxyHasGestureListeners]);
-    [self ensureGestureListeners];
-    // If a user has not explicitly set whether or not the view interacts, base it on whether or
-    // not it handles events, and if not, set it to the interaction default.
-    if (!changedInteraction) {
-        self.userInteractionEnabled = handlesTouches || [self interactionDefault];
-    }
->>>>>>> 762bd0f... Handling of background nsurl session responses
 }
 
 - (void)initializeState
 {
-<<<<<<< HEAD
   virtualParentTransform = CGAffineTransformIdentity;
 
   [self updateTouchHandling];
@@ -524,15 +291,6 @@ DEFINE_EXCEPTIONS
   self.backgroundColor = [UIColor clearColor];
 #ifndef TI_USE_AUTOLAYOUT
   self.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-=======
-    virtualParentTransform = CGAffineTransformIdentity;
-    
-    [self updateTouchHandling];
-    [[self proxy] setValue:NUMBOOL([TiUtils boolValue:[[self proxy] valueForKey:@"touchEnabled"] def:YES]) forKey:@"touchEnabled"];
-    self.backgroundColor = [UIColor clearColor];
-#ifndef TI_USE_AUTOLAYOUT
-    self.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
->>>>>>> 762bd0f... Handling of background nsurl session responses
 #else
   if (self.translatesAutoresizingMaskIntoConstraints == NO) {
     self.autoresizingMask = UIViewAutoresizingNone;
@@ -544,32 +302,18 @@ DEFINE_EXCEPTIONS
 
 - (void)configurationSet
 {
-<<<<<<< HEAD
   // can be used to trigger things after all properties are set
   configurationSet = YES;
-=======
-    // can be used to trigger things after all properties are set
-    configurationSet = YES;
->>>>>>> 762bd0f... Handling of background nsurl session responses
 }
 
 - (void)setProxy:(TiProxy *)p
 {
-<<<<<<< HEAD
   proxy = p;
   [proxy setModelDelegate:self];
   [self sanitycheckListeners];
 }
 
 - (UIImage *)loadImage:(id)image
-=======
-    proxy = p;
-    [proxy setModelDelegate:self];
-    [self sanitycheckListeners];
-}
-
--(UIImage*)loadImage:(id)image
->>>>>>> 762bd0f... Handling of background nsurl session responses
 {
   if (image == nil)
     return nil;
@@ -583,73 +327,41 @@ DEFINE_EXCEPTIONS
 
 - (id)transformMatrix
 {
-<<<<<<< HEAD
   return transformMatrix;
-=======
-    return transformMatrix;
->>>>>>> 762bd0f... Handling of background nsurl session responses
 }
 
 - (id)accessibilityElement
 {
-<<<<<<< HEAD
   return self;
-=======
-    return self;
->>>>>>> 762bd0f... Handling of background nsurl session responses
 }
 
 #pragma mark - Accessibility API
 
 - (void)setAccessibilityLabel_:(id)accessibilityLabel
 {
-<<<<<<< HEAD
   id accessibilityElement = self.accessibilityElement;
   if (accessibilityElement != nil) {
     [accessibilityElement setIsAccessibilityElement:YES];
     [accessibilityElement setAccessibilityLabel:[TiUtils stringValue:accessibilityLabel]];
   }
-=======
-    id accessibilityElement = self.accessibilityElement;
-    if (accessibilityElement != nil) {
-        [accessibilityElement setIsAccessibilityElement:YES];
-        [accessibilityElement setAccessibilityLabel:[TiUtils stringValue:accessibilityLabel]];
-    }
->>>>>>> 762bd0f... Handling of background nsurl session responses
 }
 
 - (void)setAccessibilityValue_:(id)accessibilityValue
 {
-<<<<<<< HEAD
   id accessibilityElement = self.accessibilityElement;
   if (accessibilityElement != nil) {
     [accessibilityElement setIsAccessibilityElement:YES];
     [accessibilityElement setAccessibilityValue:[TiUtils stringValue:accessibilityValue]];
   }
-=======
-    id accessibilityElement = self.accessibilityElement;
-    if (accessibilityElement != nil) {
-        [accessibilityElement setIsAccessibilityElement:YES];
-        [accessibilityElement setAccessibilityValue:[TiUtils stringValue:accessibilityValue]];
-    }
->>>>>>> 762bd0f... Handling of background nsurl session responses
 }
 
 - (void)setAccessibilityHint_:(id)accessibilityHint
 {
-<<<<<<< HEAD
   id accessibilityElement = self.accessibilityElement;
   if (accessibilityElement != nil) {
     [accessibilityElement setIsAccessibilityElement:YES];
     [accessibilityElement setAccessibilityHint:[TiUtils stringValue:accessibilityHint]];
   }
-=======
-    id accessibilityElement = self.accessibilityElement;
-    if (accessibilityElement != nil) {
-        [accessibilityElement setIsAccessibilityElement:YES];
-        [accessibilityElement setAccessibilityHint:[TiUtils stringValue:accessibilityHint]];
-    }
->>>>>>> 762bd0f... Handling of background nsurl session responses
 }
 
 - (void)setAccessibilityHidden_:(id)accessibilityHidden
@@ -676,7 +388,6 @@ DEFINE_EXCEPTIONS
 
 - (void)setFrame:(CGRect)frame
 {
-<<<<<<< HEAD
   [super setFrame:frame];
 
 #ifndef TI_USE_AUTOLAYOUT
@@ -688,21 +399,6 @@ DEFINE_EXCEPTIONS
     childrenInitialized = YES;
     [(TiViewProxy *)self.proxy layoutChildren:NO];
   }
-=======
-    [super setFrame:frame];
-    
-#ifndef TI_USE_AUTOLAYOUT
-    // this happens when a view is added to another view but not
-    // through the framework (such as a tableview header) and it
-    // means we need to force the layout of our children
-    if (childrenInitialized==NO &&
-        CGRectIsEmpty(frame)==NO &&
-        [self.proxy isKindOfClass:[TiViewProxy class]])
-    {
-        childrenInitialized=YES;
-        [(TiViewProxy*)self.proxy layoutChildren:NO];
-    }
->>>>>>> 762bd0f... Handling of background nsurl session responses
 #endif
 }
 
@@ -733,31 +429,19 @@ DEFINE_EXCEPTIONS
 
 - (void)setBounds:(CGRect)bounds
 {
-<<<<<<< HEAD
   [super setBounds:bounds];
   [self checkBounds];
-=======
-    [super setBounds:bounds];
-    [self checkBounds];
->>>>>>> 762bd0f... Handling of background nsurl session responses
 }
 
 - (void)layoutSubviews
 {
-<<<<<<< HEAD
   [super layoutSubviews];
 
   [self checkBounds];
-=======
-    [super layoutSubviews];
-    
-    [self checkBounds];
->>>>>>> 762bd0f... Handling of background nsurl session responses
 }
 - (void)updateTransform
 {
 #ifdef USE_TI_UI2DMATRIX
-<<<<<<< HEAD
   if ([transformMatrix isKindOfClass:[Ti2DMatrix class]]) {
     self.transform = CGAffineTransformConcat(virtualParentTransform, [(Ti2DMatrix *)transformMatrix matrix]);
     return;
@@ -770,55 +454,24 @@ DEFINE_EXCEPTIONS
   }
 #endif
   self.transform = virtualParentTransform;
-=======
-    if ([transformMatrix isKindOfClass:[Ti2DMatrix class]])
-    {
-        self.transform = CGAffineTransformConcat(virtualParentTransform, [(Ti2DMatrix*)transformMatrix matrix]);
-        return;
-    }
-#endif
-#ifdef USE_TI_UI3DMATRIX
-    if ([transformMatrix isKindOfClass:[Ti3DMatrix class]])
-    {
-        self.layer.transform = CATransform3DConcat(CATransform3DMakeAffineTransform(virtualParentTransform),[(Ti3DMatrix*)transformMatrix matrix]);
-        return;
-    }
-#endif
-    self.transform = virtualParentTransform;
->>>>>>> 762bd0f... Handling of background nsurl session responses
 }
 
 - (void)setVirtualParentTransform:(CGAffineTransform)newTransform
 {
-<<<<<<< HEAD
   virtualParentTransform = newTransform;
   [self updateTransform];
-=======
-    virtualParentTransform = newTransform;
-    [self updateTransform];
->>>>>>> 762bd0f... Handling of background nsurl session responses
 }
 
 - (void)fillBoundsToRect:(TiRect *)rect
 {
-<<<<<<< HEAD
   CGRect r = [self bounds];
   [rect setRect:r];
-=======
-    CGRect r = [self bounds];
-    [rect setRect:r];
->>>>>>> 762bd0f... Handling of background nsurl session responses
 }
 
 - (void)fillFrameToRect:(TiRect *)rect
 {
-<<<<<<< HEAD
   CGRect r = [self frame];
   [rect setRect:r];
-=======
-    CGRect r = [self frame];
-    [rect setRect:r];
->>>>>>> 762bd0f... Handling of background nsurl session responses
 }
 
 #pragma mark Public APIs
@@ -831,21 +484,12 @@ DEFINE_EXCEPTIONS
 
 - (void)setBorderColor_:(id)color
 {
-<<<<<<< HEAD
   TiColor *ticolor = [TiUtils colorValue:color];
   self.layer.borderWidth = MAX(self.layer.borderWidth, 1);
   self.layer.borderColor = [ticolor _color].CGColor;
 }
 
 - (void)setBorderWidth_:(id)w
-=======
-    TiColor *ticolor = [TiUtils colorValue:color];
-    self.layer.borderWidth = MAX(self.layer.borderWidth,1);
-    self.layer.borderColor = [ticolor _color].CGColor;
-}
-
--(void)setBorderWidth_:(id)w
->>>>>>> 762bd0f... Handling of background nsurl session responses
 {
   TiDimension theDim = TiDimensionFromObject(w);
   if (TiDimensionIsDip(theDim)) {
@@ -858,42 +502,22 @@ DEFINE_EXCEPTIONS
 
 - (void)setBackgroundColor_:(id)color
 {
-<<<<<<< HEAD
   if ([color isKindOfClass:[UIColor class]]) {
     super.backgroundColor = color;
   } else {
     TiColor *ticolor = [TiUtils colorValue:color];
     super.backgroundColor = [ticolor _color];
   }
-=======
-    if ([color isKindOfClass:[UIColor class]])
-    {
-        super.backgroundColor = color;
-    }
-    else
-    {
-        TiColor *ticolor = [TiUtils colorValue:color];
-        super.backgroundColor = [ticolor _color];
-    }
->>>>>>> 762bd0f... Handling of background nsurl session responses
 }
 
 - (void)setOpacity_:(id)opacity
 {
-<<<<<<< HEAD
   self.alpha = [TiUtils floatValue:opacity];
-=======
-    self.alpha = [TiUtils floatValue:opacity];
->>>>>>> 762bd0f... Handling of background nsurl session responses
 }
 
 - (CALayer *)backgroundImageLayer
 {
-<<<<<<< HEAD
   return bgdImageLayer;
-=======
-    return bgdImageLayer;
->>>>>>> 762bd0f... Handling of background nsurl session responses
 }
 
 - (CALayer *)gradientLayer
@@ -948,7 +572,6 @@ DEFINE_EXCEPTIONS
   if (background == nil) {
     //TIMOB-11564. Either width or height of the bounds is zero
     UIGraphicsEndImageContext();
-<<<<<<< HEAD
     return;
   }
   CGRect imageRect = CGRectMake(0, 0, bgImage.size.width, bgImage.size.height);
@@ -957,10 +580,6 @@ DEFINE_EXCEPTIONS
   UIGraphicsEndImageContext();
 
   [self backgroundImageLayer].contents = (id)renderedBg.CGImage;
-=======
-    
-    [self backgroundImageLayer].contents = (id)renderedBg.CGImage;
->>>>>>> 762bd0f... Handling of background nsurl session responses
 }
 
 - (void)setBackgroundImage_:(id)image
@@ -1046,38 +665,23 @@ DEFINE_EXCEPTIONS
 
 - (void)setAnchorPoint_:(id)point
 {
-<<<<<<< HEAD
   self.layer.anchorPoint = [TiUtils pointValue:point];
-=======
-    self.layer.anchorPoint = [TiUtils pointValue:point];
->>>>>>> 762bd0f... Handling of background nsurl session responses
 }
 
 - (void)setTransform_:(id)transform_
 {
-<<<<<<< HEAD
   RELEASE_TO_NIL(transformMatrix);
   transformMatrix = [transform_ retain];
   [self updateTransform];
-=======
-    RELEASE_TO_NIL(transformMatrix);
-    transformMatrix = [transform_ retain];
-    [self updateTransform];
->>>>>>> 762bd0f... Handling of background nsurl session responses
 }
 
 - (void)setCenter_:(id)point
 {
-<<<<<<< HEAD
   self.center = [TiUtils pointValue:point];
-=======
-    self.center = [TiUtils pointValue:point];
->>>>>>> 762bd0f... Handling of background nsurl session responses
 }
 
 - (void)setVisible_:(id)visible
 {
-<<<<<<< HEAD
   BOOL oldVal = self.hidden;
   self.hidden = ![TiUtils boolValue:visible];
   //Redraw ourselves if changing from invisible to visible, to handle any changes made
@@ -1085,49 +689,26 @@ DEFINE_EXCEPTIONS
     TiViewProxy *viewProxy = (TiViewProxy *)[self proxy];
     [viewProxy willEnqueue];
   }
-=======
-    BOOL oldVal = self.hidden;
-    self.hidden = ![TiUtils boolValue:visible];
-    //Redraw ourselves if changing from invisible to visible, to handle any changes made
-    if (!self.hidden && oldVal) {
-        TiViewProxy* viewProxy = (TiViewProxy*)[self proxy];
-        [viewProxy willEnqueue];
-    }
->>>>>>> 762bd0f... Handling of background nsurl session responses
 }
 
 - (void)setTouchEnabled_:(id)arg
 {
-<<<<<<< HEAD
   self.userInteractionEnabled = [TiUtils boolValue:arg def:[self interactionDefault]];
   changedInteraction = YES;
-=======
-    self.userInteractionEnabled = [TiUtils boolValue:arg def:[self interactionDefault]];
-    changedInteraction = YES;
->>>>>>> 762bd0f... Handling of background nsurl session responses
 }
 
 - (BOOL)touchEnabled
 {
-<<<<<<< HEAD
   return touchEnabled;
-=======
-    return touchEnabled;
->>>>>>> 762bd0f... Handling of background nsurl session responses
 }
 
 - (UIView *)gradientWrapperView
 {
-<<<<<<< HEAD
   return self;
-=======
-    return self;
->>>>>>> 762bd0f... Handling of background nsurl session responses
 }
 
 - (void)setBackgroundGradient_:(id)arg
 {
-<<<<<<< HEAD
   if (arg == nil) {
     [gradientLayer removeFromSuperlayer];
     RELEASE_TO_NIL(gradientLayer);
@@ -1144,29 +725,6 @@ DEFINE_EXCEPTIONS
     [(TiGradientLayer *)gradientLayer setGradient:arg];
     [gradientLayer setNeedsDisplay];
   }
-=======
-    if (arg == nil)
-    {
-        [gradientLayer removeFromSuperlayer];
-        RELEASE_TO_NIL(gradientLayer);
-    }
-    else if (gradientLayer == nil)
-    {
-        gradientLayer = [[TiGradientLayer alloc] init];
-        [(TiGradientLayer *)gradientLayer setGradient:arg];
-        [gradientLayer setNeedsDisplayOnBoundsChange:YES];
-        [gradientLayer setFrame:[self bounds]];
-        [gradientLayer setNeedsDisplay];
-        gradientLayer.cornerRadius = self.layer.cornerRadius;
-        gradientLayer.masksToBounds = YES;
-        [[self gradientWrapperView].layer insertSublayer:gradientLayer atIndex:0];
-    }
-    else
-    {
-        [(TiGradientLayer *)gradientLayer setGradient:arg];
-        [gradientLayer setNeedsDisplay];
-    }
->>>>>>> 762bd0f... Handling of background nsurl session responses
 }
 
 - (void)updateClipping
@@ -1286,7 +844,6 @@ DEFINE_EXCEPTIONS
 
 - (void)animate:(TiAnimation *)newAnimation
 {
-<<<<<<< HEAD
   RELEASE_TO_NIL(animation);
 
   if ([self.proxy isKindOfClass:[TiViewProxy class]] && [(TiViewProxy *)self.proxy viewReady] == NO) {
@@ -1295,40 +852,6 @@ DEFINE_EXCEPTIONS
       DebugLog(@"[DEBUG] Animation guard triggered, exceeded timeout to perform animation.");
       animationDelayGuard = 0;
       return;
-=======
-    RELEASE_TO_NIL(animation);
-    
-    if ([self.proxy isKindOfClass:[TiViewProxy class]] && [(TiViewProxy*)self.proxy viewReady]==NO)
-    {
-        DebugLog(@"[DEBUG] Ti.View.animate() called before view %@ was ready: Will re-attempt", self);
-        if (animationDelayGuard++ > 5)
-        {
-            DebugLog(@"[DEBUG] Animation guard triggered, exceeded timeout to perform animation.");
-            animationDelayGuard = 0;
-            return;
-        }
-        [self performSelector:@selector(animate:) withObject:newAnimation afterDelay:0.01];
-        return;
-    }
-    
-    animationDelayGuard = 0;
-    BOOL resetState = NO;
-    if ([self.proxy isKindOfClass:[TiViewProxy class]] && [(TiViewProxy*)self.proxy willBeRelaying]) {
-        DeveloperLog(@"RESETTING STATE");
-        resetState = YES;
-    }
-    
-    animationDelayGuardForLayout = 0;
-    
-    if (newAnimation != nil) {
-        RELEASE_TO_NIL(animation);
-        animation = [newAnimation retain];
-        animation.resetState = resetState;
-        [animation animate:self];
-    }
-    else {
-        DebugLog(@"[WARN] Ti.View.animate() (view %@) could not make animation from: %@", self, newAnimation);
->>>>>>> 762bd0f... Handling of background nsurl session responses
     }
     [self performSelector:@selector(animate:) withObject:newAnimation afterDelay:0.01];
     return;
@@ -1358,57 +881,35 @@ DEFINE_EXCEPTIONS
 }
 - (void)animationCompleted
 {
-<<<<<<< HEAD
   animating = NO;
-=======
-    animating = NO;
->>>>>>> 762bd0f... Handling of background nsurl session responses
 }
 
 - (BOOL)animating
 {
-<<<<<<< HEAD
   return animating;
-=======
-    return animating;
->>>>>>> 762bd0f... Handling of background nsurl session responses
 }
 
 #pragma mark Property Change Support
 
 - (SEL)selectorForProperty:(NSString *)key
 {
-<<<<<<< HEAD
   NSString *method = [NSString stringWithFormat:@"set%@%@_:", [[key substringToIndex:1] uppercaseString], [key substringFromIndex:1]];
   return NSSelectorFromString(method);
-=======
-    NSString *method = [NSString stringWithFormat:@"set%@%@_:", [[key substringToIndex:1] uppercaseString], [key substringFromIndex:1]];
-    return NSSelectorFromString(method);
->>>>>>> 762bd0f... Handling of background nsurl session responses
 }
 
 - (void)readProxyValuesWithKeys:(id<NSFastEnumeration>)keys
 {
-<<<<<<< HEAD
   DoProxyDelegateReadValuesWithKeysFromProxy(self, keys, proxy);
-=======
-    DoProxyDelegateReadValuesWithKeysFromProxy(self, keys, proxy);
->>>>>>> 762bd0f... Handling of background nsurl session responses
 }
 
 - (void)propertyChanged:(NSString *)key oldValue:(id)oldValue newValue:(id)newValue proxy:(TiProxy *)proxy_
 {
-<<<<<<< HEAD
   DoProxyDelegateChangedValuesWithProxy(self, key, oldValue, newValue, proxy_);
-=======
-    DoProxyDelegateChangedValuesWithProxy(self, key, oldValue, newValue, proxy_);
->>>>>>> 762bd0f... Handling of background nsurl session responses
 }
 
 //Todo: Generalize.
 - (void)setKrollValue:(id)value forKey:(NSString *)key withObject:(id)props
 {
-<<<<<<< HEAD
   if (value == [NSNull null]) {
     value = nil;
   }
@@ -1423,95 +924,10 @@ DEFINE_EXCEPTIONS
   if ([self respondsToSelector:method]) {
     [self performSelector:method withObject:value];
   }
-=======
-    if(value == [NSNull null])
-    {
-        value = nil;
-    }
-    
-    SEL method = SetterWithObjectForKrollProperty(key);
-    if([self respondsToSelector:method])
-    {
-        [self performSelector:method withObject:value withObject:props];
-        return;
-    }
-    
-    method = SetterForKrollProperty(key);
-    if([self respondsToSelector:method])
-    {
-        [self performSelector:method withObject:value];
-    }
-}
-
--(void)transferProxy:(TiViewProxy*)newProxy deep:(BOOL)deep
-{
-    TiViewProxy * oldProxy = (TiViewProxy *)[self proxy];
-    
-    // We can safely skip everything if we're transferring to ourself.
-    if (oldProxy != newProxy) {
-        NSArray * oldProperties = (NSArray *)[oldProxy allKeys];
-        NSArray * newProperties = (NSArray *)[newProxy allKeys];
-        NSArray * keySequence = [newProxy keySequence];
-        [oldProxy retain];
-        [self retain];
-        
-        [newProxy setReproxying:YES];
-        
-        [oldProxy setView:nil];
-        [newProxy setView:self];
-        [self setProxy:[newProxy retain]];
-        
-        //The important sequence first:
-        for (NSString * thisKey in keySequence)
-        {
-            id newValue = [newProxy valueForKey:thisKey];
-            id oldValue = [oldProxy valueForKey:thisKey];
-            if ((oldValue != newValue) && ![oldValue isEqual:newValue]) {
-                [self setKrollValue:newValue forKey:thisKey withObject:nil];
-            }
-        }
-        
-        for (NSString * thisKey in oldProperties)
-        {
-            if([newProperties containsObject:thisKey] || [keySequence containsObject:thisKey])
-            {
-                continue;
-            }
-            [self setKrollValue:nil forKey:thisKey withObject:nil];
-        }
-        
-        for (NSString * thisKey in newProperties)
-        {
-            if ([keySequence containsObject:thisKey])
-            {
-                continue;
-            }
-            
-            // Always set the new value, even if 'equal' - some view setters (as in UIImageView)
-            // use internal voodoo to determine what to display.
-            // TODO: We may be able to take this out once the imageView.url property is taken out, and change it back to an equality test.
-            id newValue = [newProxy valueForUndefinedKey:thisKey];
-            [self setKrollValue:newValue forKey:thisKey withObject:nil];
-        }
-        
-        if (deep) {
-            NSArray *subProxies = [newProxy children];
-            [[oldProxy children] enumerateObjectsUsingBlock:^(TiViewProxy *oldSubProxy, NSUInteger idx, BOOL *stop) {
-                TiViewProxy *newSubProxy = idx < [subProxies count] ? [subProxies objectAtIndex:idx] : nil;
-                [[oldSubProxy view] transferProxy:newSubProxy deep:YES];
-            }];
-        }
-        [oldProxy release];
-        
-        [newProxy setReproxying:NO];
-        [self release];
-    }
->>>>>>> 762bd0f... Handling of background nsurl session responses
 }
 
 - (void)transferProxy:(TiViewProxy *)newProxy deep:(BOOL)deep
 {
-<<<<<<< HEAD
   TiViewProxy *oldProxy = (TiViewProxy *)[self proxy];
 
   // We can safely skip everything if we're transferring to ourself.
@@ -1521,52 +937,12 @@ DEFINE_EXCEPTIONS
     NSArray *keySequence = [newProxy keySequence];
     [oldProxy retain];
     [self retain];
-=======
-    TiViewProxy * oldProxy = (TiViewProxy *)[self proxy];
-    
-    if (oldProxy == newProxy) {
-        return YES;
-    }
-    if (![newProxy isMemberOfClass:[oldProxy class]]) {
-        return NO;
-    }
-    
-    __block BOOL result = YES;
-    if (deep) {
-        NSArray *subProxies = [newProxy children];
-        NSArray *oldSubProxies = [oldProxy children];
-        if ([subProxies count] != [oldSubProxies count]) {
-            return NO;
-        }
-        [oldSubProxies enumerateObjectsUsingBlock:^(TiViewProxy *oldSubProxy, NSUInteger idx, BOOL *stop) {
-            TiViewProxy *newSubProxy = [subProxies objectAtIndex:idx];
-            result = [[oldSubProxy view] validateTransferToProxy:newSubProxy deep:YES];
-            if (!result) {
-                *stop = YES;
-            }
-        }];
-    }
-    return result;
-}
-
--(id)proxyValueForKey:(NSString *)key
-{
-    return [proxy valueForKey:key];
-}
->>>>>>> 762bd0f... Handling of background nsurl session responses
 
     [newProxy setReproxying:YES];
 
-<<<<<<< HEAD
     [oldProxy setView:nil];
     [newProxy setView:self];
     [self setProxy:[newProxy retain]];
-=======
--(void)makeRootViewFirstResponder
-{
-    [[[TiApp controller] view] becomeFirstResponder];
-}
->>>>>>> 762bd0f... Handling of background nsurl session responses
 
     //The important sequence first:
     for (NSString *thisKey in keySequence) {
@@ -1669,7 +1045,6 @@ DEFINE_EXCEPTIONS
 
 - (UITapGestureRecognizer *)doubleTapRecognizer
 {
-<<<<<<< HEAD
   if (doubleTapRecognizer == nil) {
     doubleTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(recognizedTap:)];
     [doubleTapRecognizer setNumberOfTapsRequired:2];
@@ -1775,48 +1150,6 @@ DEFINE_EXCEPTIONS
     //Because double-tap suppresses touchStart and double-click, we must do this:
     if ([proxy _hasListeners:@"touchstart"]) {
       [proxy fireEvent:@"touchstart" withObject:event propagate:YES];
-=======
-    CGPoint tapPoint = [recognizer locationInView:self];
-    NSDictionary *event = [TiUtils pointToDictionary:tapPoint];
-    
-    if ([recognizer numberOfTouchesRequired] == 2) {
-        [proxy fireEvent:@"twofingertap" withObject:event];
-    }
-    else if ([recognizer numberOfTapsRequired] == 2) {
-        //Because double-tap suppresses touchStart and double-click, we must do this:
-        if ([proxy _hasListeners:@"touchstart"])
-        {
-            [proxy fireEvent:@"touchstart" withObject:event propagate:YES];
-        }
-        if ([proxy _hasListeners:@"dblclick"]) {
-            [proxy fireEvent:@"dblclick" withObject:event propagate:YES];
-        }
-        [proxy fireEvent:@"doubletap" withObject:event];
-    }
-    else {
-        [proxy fireEvent:@"singletap" withObject:event];
-    }
-}
-
--(void)recognizedPinch:(UIPinchGestureRecognizer*)recognizer
-{
-    NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:
-                           NUMDOUBLE(recognizer.scale), @"scale",
-                           NUMDOUBLE(recognizer.velocity), @"velocity",
-                           nil];
-    [self.proxy fireEvent:@"pinch" withObject:event];
-}
-
--(void)recognizedLongPress:(UILongPressGestureRecognizer*)recognizer
-{
-    if ([recognizer state] == UIGestureRecognizerStateBegan) {
-        CGPoint p = [recognizer locationInView:self];
-        NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:
-                               NUMFLOAT(p.x), @"x",
-                               NUMFLOAT(p.y), @"y",
-                               nil];
-        [self.proxy fireEvent:@"longpress" withObject:event];
->>>>>>> 762bd0f... Handling of background nsurl session responses
     }
     if ([proxy _hasListeners:@"dblclick"]) {
       [proxy fireEvent:@"dblclick" withObject:event propagate:YES];
@@ -1827,7 +1160,6 @@ DEFINE_EXCEPTIONS
   }
 }
 
-<<<<<<< HEAD
 - (void)recognizedPinch:(UIPinchGestureRecognizer *)recognizer
 {
   NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:
@@ -1875,60 +1207,22 @@ DEFINE_EXCEPTIONS
   [event setValue:swipeString forKey:@"direction"];
   [proxy fireEvent:@"swipe" withObject:event];
   [event release];
-=======
--(void)recognizedSwipe:(UISwipeGestureRecognizer *)recognizer
-{
-    NSString* swipeString;
-    switch ([recognizer direction]) {
-        case UISwipeGestureRecognizerDirectionUp:
-            swipeString = @"up";
-            break;
-        case UISwipeGestureRecognizerDirectionDown:
-            swipeString = @"down";
-            break;
-        case UISwipeGestureRecognizerDirectionLeft:
-            swipeString = @"left";
-            break;
-        case UISwipeGestureRecognizerDirectionRight:
-            swipeString = @"right";
-            break;
-        default:
-            swipeString = @"unknown";
-            break;
-    }
-    
-    CGPoint tapPoint = [recognizer locationInView:self];
-    NSMutableDictionary *event = [[TiUtils pointToDictionary:tapPoint] mutableCopy];
-    [event setValue:swipeString forKey:@"direction"];
-    [proxy fireEvent:@"swipe" withObject:event];
-    [event release];
-    
->>>>>>> 762bd0f... Handling of background nsurl session responses
 }
 
 #pragma mark Touch Events
 
 - (BOOL)interactionDefault
 {
-<<<<<<< HEAD
   return YES;
-=======
-    return YES;
->>>>>>> 762bd0f... Handling of background nsurl session responses
 }
 
 - (BOOL)interactionEnabled
 {
-<<<<<<< HEAD
   return self.userInteractionEnabled;
-=======
-    return self.userInteractionEnabled;
->>>>>>> 762bd0f... Handling of background nsurl session responses
 }
 
 - (BOOL)hasTouchableListener
 {
-<<<<<<< HEAD
   return handlesTouches;
 }
 
@@ -1957,55 +1251,16 @@ DEFINE_EXCEPTIONS
      */
 
   return [super hitTest:point withEvent:event];
-=======
-    return handlesTouches;
-}
-
-- (UIView *)hitTest:(CGPoint) point withEvent:(UIEvent *)event
-{
-    BOOL hasTouchListeners = [self hasTouchableListener];
-    
-    // if we don't have any touch listeners, see if interaction should
-    // be handled at all.. NOTE: we don't turn off the views interactionEnabled
-    // property since we need special handling ourselves and if we turn it off
-    // on the view, we'd never get this event
-    if (hasTouchListeners == NO && [self interactionEnabled]==NO)
-    {
-        return nil;
-    }
-    
-    // OK, this is problematic because of the situation where:
-    // touchDelegate --> view --> button
-    // The touch never reaches the button, because the touchDelegate is as deep as the touch goes.
-    
-    /*
-     // delegate to our touch delegate if we're hit but it's not for us
-     if (hasTouchListeners==NO && touchDelegate!=nil)
-     {
-     return touchDelegate;
-     }
-     */
-    
-    return [super hitTest:point withEvent:event];
->>>>>>> 762bd0f... Handling of background nsurl session responses
 }
 
 // TODO: Revisit this design decision in post-1.3.0
 - (void)handleControlEvents:(UIControlEvents)events
 {
-<<<<<<< HEAD
   // For subclasses (esp. buttons) to override when they have event handlers.
   TiViewProxy *parentProxy = [(TiViewProxy *)proxy parent];
   if ([parentProxy viewAttached] && [parentProxy canHaveControllerParent]) {
     [[parentProxy view] handleControlEvents:events];
   }
-=======
-    // For subclasses (esp. buttons) to override when they have event handlers.
-    TiViewProxy* parentProxy = [(TiViewProxy*)proxy parent];
-    if ([parentProxy viewAttached] && [parentProxy canHaveControllerParent]) {
-        [[parentProxy view] handleControlEvents:events];
-    }
->>>>>>> 762bd0f... Handling of background nsurl session responses
 }
 
 // For subclasses
@@ -2024,7 +1279,6 @@ DEFINE_EXCEPTIONS
 
 - (void)processTouchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
 {
-<<<<<<< HEAD
   if (handlesTouches) {
     if ([proxy _hasListeners:@"touchstart"]) {
       UITouch *touch = [touches anyObject];
@@ -2033,18 +1287,6 @@ DEFINE_EXCEPTIONS
       [self handleControlEvents:UIControlEventTouchDown];
     }
   }
-=======
-    if (handlesTouches)
-    {
-        if ([proxy _hasListeners:@"touchstart"])
-        {
-            UITouch *touch = [touches anyObject];
-            NSDictionary *evt = [NSMutableDictionary dictionaryWithDictionary:[TiUtils touchPropertiesToDictionary:touch andView:self]];
-            [proxy fireEvent:@"touchstart" withObject:evt propagate:YES];
-            [self handleControlEvents:UIControlEventTouchDown];
-        }
-    }
->>>>>>> 762bd0f... Handling of background nsurl session responses
 }
 
 - (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event
@@ -2057,7 +1299,6 @@ DEFINE_EXCEPTIONS
 
 - (void)processTouchesMoved:(NSSet *)touches withEvent:(UIEvent *)event
 {
-<<<<<<< HEAD
   if (handlesTouches) {
     if ([proxy _hasListeners:@"touchmove"]) {
       UITouch *touch = [touches anyObject];
@@ -2065,17 +1306,6 @@ DEFINE_EXCEPTIONS
       [proxy fireEvent:@"touchmove" withObject:evt propagate:YES];
     }
   }
-=======
-    if (handlesTouches)
-    {
-        if ([proxy _hasListeners:@"touchmove"])
-        {
-            UITouch *touch = [touches anyObject];
-            NSDictionary *evt = [NSMutableDictionary dictionaryWithDictionary:[TiUtils touchPropertiesToDictionary:touch andView:self]];
-            [proxy fireEvent:@"touchmove" withObject:evt propagate:YES];
-        }
-    }
->>>>>>> 762bd0f... Handling of background nsurl session responses
 }
 
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
@@ -2088,11 +1318,11 @@ DEFINE_EXCEPTIONS
 
 - (void)processTouchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
 {
-<<<<<<< HEAD
   if (handlesTouches) {
     UITouch *touch = [touches anyObject];
     NSDictionary *evt = [NSMutableDictionary dictionaryWithDictionary:[TiUtils touchPropertiesToDictionary:touch andView:self]];
-
+    NSMutableDictionary *globalTouch = [NSMutableDictionary dictionaryWithDictionary:[TiUtils touchPropertiesToDictionary:touch andView:[UIApplication sharedApplication].keyWindow.rootViewController.view]];
+    [evt setObject:globalTouch forKey:@"globalPoint"];
     if ([proxy _hasListeners:@"touchend"]) {
       [proxy fireEvent:@"touchend" withObject:evt propagate:YES];
       [self handleControlEvents:UIControlEventTouchCancel];
@@ -2111,35 +1341,6 @@ DEFINE_EXCEPTIONS
       return;
     }
   }
-=======
-    if (handlesTouches)
-    {
-        UITouch *touch = [touches anyObject];
-        //Richard's hack
-        NSMutableDictionary *evt = [NSMutableDictionary dictionaryWithDictionary:[TiUtils touchPropertiesToDictionary:touch andView:self]];
-        NSMutableDictionary *globalTouch = [NSMutableDictionary dictionaryWithDictionary:[TiUtils touchPropertiesToDictionary:touch andView:[UIApplication sharedApplication].keyWindow.rootViewController.view]];
-        [evt setObject:globalTouch forKey:@"globalPoint"];
-        if ([proxy _hasListeners:@"touchend"])
-        {
-            [proxy fireEvent:@"touchend" withObject:evt propagate:YES];
-            [self handleControlEvents:UIControlEventTouchCancel];
-        }
-        
-        // Click handling is special; don't propagate if we have a delegate,
-        // but DO invoke the touch delegate.
-        // clicks should also be handled by any control the view is embedded in.
-        if ([touch tapCount] == 1 && [proxy _hasListeners:@"click"])
-        {
-            if (touchDelegate == nil) {
-                [proxy fireEvent:@"click" withObject:evt propagate:YES];
-                return;
-            }
-        } else if ([touch tapCount] == 2 && [proxy _hasListeners:@"dblclick"]) {
-            [proxy fireEvent:@"dblclick" withObject:evt propagate:YES];
-            return;
-        }
-    }
->>>>>>> 762bd0f... Handling of background nsurl session responses
 }
 
 - (void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event
@@ -2152,7 +1353,6 @@ DEFINE_EXCEPTIONS
 
 - (void)processTouchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event
 {
-<<<<<<< HEAD
   if (handlesTouches) {
     if ([proxy _hasListeners:@"touchcancel"]) {
       UITouch *touch = [touches anyObject];
@@ -2160,17 +1360,6 @@ DEFINE_EXCEPTIONS
       [proxy fireEvent:@"touchcancel" withObject:evt propagate:YES];
     }
   }
-=======
-    if (handlesTouches)
-    {
-        if ([proxy _hasListeners:@"touchcancel"])
-        {
-            UITouch *touch = [touches anyObject];
-            NSDictionary *evt = [NSMutableDictionary dictionaryWithDictionary:[TiUtils touchPropertiesToDictionary:touch andView:self]];
-            [proxy fireEvent:@"touchcancel" withObject:evt propagate:YES];
-        }
-    }
->>>>>>> 762bd0f... Handling of background nsurl session responses
 }
 
 - (void)processKeyPressed:(NSString *)key
@@ -2286,82 +1475,7 @@ DEFINE_EXCEPTIONS
     if ([proxy _hasListeners:eventName]) {
       [self handleListenerAddedWithEvent:eventName];
     }
-<<<<<<< HEAD
   }
-=======
-    if ([event isEqualToString:@"dswipe"]) {
-        return [self downSwipeRecognizer];
-    }
-    if ([event isEqualToString:@"pinch"]) {
-        return [self pinchRecognizer];
-    }
-    if ([event isEqualToString:@"longpress"]) {
-        return [self longPressRecognizer];
-    }
-    return nil;
-}
-
--(void)handleListenerAddedWithEvent:(NSString *)event
-{
-    ENSURE_UI_THREAD_1_ARG(event);
-    [self updateTouchHandling];
-    if ([event isEqualToString:@"swipe"]) {
-        [[self gestureRecognizerForEvent:@"uswipe"] setEnabled:YES];
-        [[self gestureRecognizerForEvent:@"dswipe"] setEnabled:YES];
-        [[self gestureRecognizerForEvent:@"rswipe"] setEnabled:YES];
-        [[self gestureRecognizerForEvent:@"lswipe"] setEnabled:YES];
-    }
-    else {
-        [[self gestureRecognizerForEvent:event] setEnabled:YES];
-    }
-}
-
--(void)handleListenerRemovedWithEvent:(NSString *)event
-{
-    ENSURE_UI_THREAD_1_ARG(event);
-    // unfortunately on a remove, we have to check all of them
-    // since we might be removing one but we still have others
-    
-    [self updateTouchHandling];
-    if ([event isEqualToString:@"swipe"]) {
-        [[self gestureRecognizerForEvent:@"uswipe"] setEnabled:NO];
-        [[self gestureRecognizerForEvent:@"dswipe"] setEnabled:NO];
-        [[self gestureRecognizerForEvent:@"rswipe"] setEnabled:NO];
-        [[self gestureRecognizerForEvent:@"lswipe"] setEnabled:NO];
-    }
-    else {
-        [[self gestureRecognizerForEvent:event] setEnabled:NO];
-    }
-}
-
--(void)listenerAdded:(NSString*)event count:(int)count
-{
-    if (count == 1 && [self viewSupportsBaseTouchEvents])
-    {
-        [self handleListenerAddedWithEvent:event];
-    }
-}
-
--(void)listenerRemoved:(NSString*)event count:(int)count
-{
-    if (count == 0)
-    {
-        [self handleListenerRemovedWithEvent:event];
-    }
-}
-
--(void)sanitycheckListeners	//TODO: This can be optimized and unwound later.
-{
-    if(listenerArray == nil){
-        listenerArray = [[NSArray alloc] initWithObjects: @"singletap",
-                         @"doubletap",@"twofingertap",@"swipe",@"pinch",@"longpress",nil];
-    }
-    for (NSString * eventName in listenerArray) {
-        if ([proxy _hasListeners:eventName]) {
-            [self handleListenerAddedWithEvent:eventName];
-        }
-    }
->>>>>>> 762bd0f... Handling of background nsurl session responses
 }
 
 @end
