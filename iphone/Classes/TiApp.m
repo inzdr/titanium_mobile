@@ -831,12 +831,13 @@ TI_INLINE void waitForMemoryPanicCleared();   //WARNING: This must never be run 
         [dict addEntriesFromDictionary:errorinfo];
     } else {
         NSMutableDictionary *responseObj = [uploadTaskResponses objectForKey:@(task.taskIdentifier)];
-        NSString *responseText = nil;
-        NSInteger  *statusCode = nil;
+        
         if (responseObj) {
+            NSString *responseText = nil;
+            NSInteger  statusCode = 0;
             //we only send responseText as this is the responsesData dictionary only gets filled with data from uploads
             responseText = [[NSString alloc] initWithData:[responseObj objectForKey:@"responseData"] encoding:NSUTF8StringEncoding];
-            statusCode = (NSInteger*)[responseObj objectForKey:@"statusCode"];
+            statusCode = (NSInteger)[responseObj objectForKey:@"statusCode"];
             
             [uploadTaskResponses removeObjectForKey:@(task.taskIdentifier)];
         }
@@ -844,7 +845,7 @@ TI_INLINE void waitForMemoryPanicCleared();   //WARNING: This must never be run 
         NSDictionary * success = [NSMutableDictionary dictionaryWithObjectsAndKeys:NUMBOOL(YES), @"success",
                                    NUMINT(0), @"errorCode",
                                    responseText,@"responseText",
-                                   statusCode,@"statusCode",
+                                   NUMINTEGER(statusCode),@"statusCode",
                                    nil];
         [dict addEntriesFromDictionary:success];
     }
