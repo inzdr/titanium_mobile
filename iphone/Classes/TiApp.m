@@ -823,22 +823,17 @@ TI_INLINE void waitForMemoryPanicCleared();   //WARNING: This must never be run 
     } else {
         NSMutableDictionary *responseObj = [nsURLUploadTaskResponses objectForKey:@(task.taskIdentifier)];
         if (responseObj) {
-            NSString *responseText = nil;
-            NSInteger  statusCode = 0;
             //we only send responseText as this is the responsesData dictionary only gets filled with data from uploads
-            responseText = [[NSString alloc] initWithData:[responseObj objectForKey:@"responseData"] encoding:NSUTF8StringEncoding];
-            statusCode = (NSInteger)[responseObj objectForKey:@"statusCode"];
-            
-            [nsURLUploadTaskResponses removeObjectForKey:@(task.taskIdentifier)];
+            NSString *responseText = [[NSString alloc] initWithData:[responseObj objectForKey:@"responseData"] encoding:NSUTF8StringEncoding];
+            NSInteger  statusCode = [[responseObj valueForKey:@"statusCode"] integerValue];
+            [uploadTaskResponses removeObjectForKey:@(task.taskIdentifier)];
+            NSDictionary * success = [NSMutableDictionary dictionaryWithObjectsAndKeys:NUMBOOL(YES), @"success",
+                                      NUMINT(0), @"errorCode",
+                                      responseText,@"responseText",
+                                      NUMINTEGER(statusCode),@"statusCode",
+                                      nil];
+            [dict addEntriesFromDictionary:success];
         }
-        
-        NSDictionary * success = [NSMutableDictionary dictionaryWithObjectsAndKeys:NUMBOOL(YES), @"success",
-                                  NUMINT(0), @"errorCode",
-                                  @"", @"message",
-                                  responseText,@"responseText",
-                                  NUMINTEGER(statusCode),@"statusCode",
-                                  nil];
-        [dict addEntriesFromDictionary:success];
     }
     [[NSNotificationCenter defaultCenter] postNotificationName:kTiURLSessionCompleted object:self userInfo:dict];
     
@@ -1199,6 +1194,7 @@ expectedTotalBytes:(int64_t)expectedTotalBytes {
 #endif
 	RELEASE_TO_NIL(backgroundServices);
 	RELEASE_TO_NIL(localNotification);
+    RELEASE_TO_NIL(uploadTaskResponses);
 	[super dealloc];
 }
 
