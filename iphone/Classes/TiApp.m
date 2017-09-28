@@ -955,14 +955,24 @@ TI_INLINE void waitForMemoryPanicCleared(); //WARNING: This must never be run on
         NSMutableDictionary *responseObj = [uploadTaskResponses objectForKey:@(task.taskIdentifier)];
 
         if (responseObj) {
-            NSString *responseText = nil;
-            NSInteger  statusCode = 0;
             //we only send responseText as this is the responsesData dictionary only gets filled with data from uploads
+<<<<<<< HEAD
             responseText = [[NSString alloc] initWithData:[responseObj objectForKey:@"responseData"] encoding:NSUTF8StringEncoding];
             statusCode = (NSInteger)[responseObj objectForKey:@"statusCode"];
 
+=======
+            NSString *responseText = [[NSString alloc] initWithData:[responseObj objectForKey:@"responseData"] encoding:NSUTF8StringEncoding];
+            NSInteger  statusCode = [[responseObj valueForKey:@"statusCode"] integerValue];
+>>>>>>> da871d2... Fixed TiApp.m
             [uploadTaskResponses removeObjectForKey:@(task.taskIdentifier)];
+            NSDictionary * success = [NSMutableDictionary dictionaryWithObjectsAndKeys:NUMBOOL(YES), @"success",
+                                      NUMINT(0), @"errorCode",
+                                      responseText,@"responseText",
+                                      NUMINTEGER(statusCode),@"statusCode",
+                                      nil];
+            [dict addEntriesFromDictionary:success];
         }
+<<<<<<< HEAD
 
         NSDictionary * success = [NSMutableDictionary dictionaryWithObjectsAndKeys:NUMBOOL(YES), @"success",
                                    NUMINT(0), @"errorCode",
@@ -970,6 +980,8 @@ TI_INLINE void waitForMemoryPanicCleared(); //WARNING: This must never be run on
                                    NUMINTEGER(statusCode),@"statusCode",
                                    nil];
         [dict addEntriesFromDictionary:success];
+=======
+>>>>>>> da871d2... Fixed TiApp.m
     }
     [[NSNotificationCenter defaultCenter] postNotificationName:kTiURLSessionCompleted object:self userInfo:dict];
 
