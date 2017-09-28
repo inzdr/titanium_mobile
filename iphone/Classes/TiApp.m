@@ -834,23 +834,21 @@ TI_INLINE void waitForMemoryPanicCleared();   //WARNING: This must never be run 
         [dict addEntriesFromDictionary:errorinfo];
     } else {
         NSMutableDictionary *responseObj = [uploadTaskResponses objectForKey:@(task.taskIdentifier)];
-
+        NSString *responseText = nil;
+        NSInteger  statusCode = 0;
         if (responseObj) {
-            NSString *responseText = nil;
-            NSInteger  statusCode = 0;
+
             //we only send responseText as this is the responsesData dictionary only gets filled with data from uploads
-            responseText = [[NSString alloc] initWithData:[responseObj objectForKey:@"responseData"] encoding:NSUTF8StringEncoding];
-            statusCode = (NSInteger)[responseObj objectForKey:@"statusCode"];
-            
+            NSString *responseText = [[NSString alloc] initWithData:[responseObj objectForKey:@"responseData"] encoding:NSUTF8StringEncoding];
+            NSInteger  statusCode = [[responseObj valueForKey:@"statusCode"] integerValue];
             [uploadTaskResponses removeObjectForKey:@(task.taskIdentifier)];
+            NSDictionary * success = [NSMutableDictionary dictionaryWithObjectsAndKeys:NUMBOOL(YES), @"success",
+                                      NUMINT(0), @"errorCode",
+                                      responseText,@"responseText",
+                                      NUMINTEGER(statusCode),@"statusCode",
+                                      nil];
+            [dict addEntriesFromDictionary:success];
         }
-        
-        NSDictionary * success = [NSMutableDictionary dictionaryWithObjectsAndKeys:NUMBOOL(YES), @"success",
-                                   NUMINT(0), @"errorCode",
-                                   responseText,@"responseText",
-                                   NUMINTEGER(statusCode),@"statusCode",
-                                   nil];
-        [dict addEntriesFromDictionary:success];
     }
     [[NSNotificationCenter defaultCenter] postNotificationName:kTiURLSessionCompleted object:self userInfo:dict];
 
