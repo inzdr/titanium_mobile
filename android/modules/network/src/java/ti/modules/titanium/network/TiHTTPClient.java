@@ -874,7 +874,9 @@ public class TiHTTPClient
 		}
 
 		setReadyState(READY_STATE_OPENED);
-		setRequestHeader("User-Agent", TITANIUM_USER_AGENT);
+		// phobeous - 2017.11.28 : once that we added Ti.setUserAgent, there's no need to explicitly set here
+		//setRequestHeader("User-Agent", TITANIUM_USER_AGENT);
+
 		// Causes Auth to Fail with twitter and other size apparently block X- as well
 		// Ticket #729, ignore twitter for now
 		if (!hostString.contains("twitter.com")) {
