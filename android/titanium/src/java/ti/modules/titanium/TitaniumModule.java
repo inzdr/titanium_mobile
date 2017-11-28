@@ -33,6 +33,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.util.SparseArray;
+import android.os.Build;
 
 @Kroll.module @Kroll.topLevel({"Ti", "Titanium"})
 public class TitaniumModule extends KrollModule
@@ -63,14 +64,33 @@ public class TitaniumModule extends KrollModule
 	@Kroll.getProperty @Kroll.method
 	public String getUserAgent()
 	{
-		StringBuilder builder = new StringBuilder();
+		// phobeous - 2017.11.28 : Now we set default user-agent on application start (TiApplication constructor)
+		/*StringBuilder builder = new StringBuilder();
 		String httpAgent = System.getProperty("http.agent");
 		if (httpAgent != null) {
 			builder.append(httpAgent);
 		}
 		builder.append(" Titanium/")
-			.append(getVersion());
+			.append(getVersion())
+			.append(" (")
+			.append(Build.MODEL)
+			.append("; Android API Level: ")
+			.append(Integer.toString(Build.VERSION.SDK_INT))
+			.append("; ")
+			.append(TiPlatformHelper.getInstance().getLocale())
+			.append(";)");
 		return builder.toString();
+		*/
+		return System.getProperty("http.agent");
+	}
+
+	@Kroll.setProperty @Kroll.method
+	public void setUserAgent(String userAgent)
+	{
+		StringBuilder builder = new StringBuilder();
+		builder.append(userAgent);
+		builder.append(TiApplication.getInstance().getTiUserAgentString());
+		System.setProperty("http.agent", builder.toString());
 	}
 
 	@Kroll.getProperty @Kroll.method
