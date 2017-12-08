@@ -169,7 +169,12 @@ public class TiThumbnailRetriever implements Handler.Callback{
 					} else {
 						mUri = TiUIHelper.getRedirectUri(mUri);
 						if (Build.VERSION.SDK_INT >= 14){
-							mMediaMetadataRetriever.setDataSource(TiApplication.getAppRootOrCurrentActivity(), mUri);
+							// phobeous - 2017.12.08: actually this is not necessari for .setDataSource(Context ctx, Uri uri) but for .setDataSource(Context ct, Uri uri, Map<String, String> headers)
+							// so something is telling me that headers were considered at some past time
+							//mMediaMetadataRetriever.setDataSource(TiApplication.getAppRootOrCurrentActivity(), mUri);
+							HashMap<String, String> httpHeaders = new HashMap<String,String>();
+							httpHeaders.put("User-Agent", System.getProperty("http.agent"));
+							mMediaMetadataRetriever.setDataSource(TiApplication.getAppRootOrCurrentActivity(), mUri, httpHeaders);
 						} else{
 							mMediaMetadataRetriever.setDataSource(mUri.toString());
 						}
