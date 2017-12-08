@@ -173,10 +173,13 @@ public class TiThumbnailRetriever implements Handler.Callback
 						}
 					} else {
 						mUri = TiUIHelper.getRedirectUri(mUri);
+
+            HashMap<String, String> httpHeaders = new HashMap<String,String>();
+            httpHeaders.put("User-Agent", System.getProperty("http.agent"));
 						if (URLUtil.isNetworkUrl(mUri.toString())) {
-							mMediaMetadataRetriever.setDataSource(mUri.toString(), new HashMap<String, String>());
+							mMediaMetadataRetriever.setDataSource(mUri.toString(), new HashMap<String, String>(),httpHeaders);
 						} else {
-							mMediaMetadataRetriever.setDataSource(TiApplication.getAppRootOrCurrentActivity(), mUri);
+							mMediaMetadataRetriever.setDataSource(TiApplication.getAppRootOrCurrentActivity(), mUri,httpHeaders);
 						}
 					}
 				} catch (IOException ex) {
