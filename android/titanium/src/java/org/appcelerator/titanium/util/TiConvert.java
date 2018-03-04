@@ -360,11 +360,11 @@ public class TiConvert
 			return numeric > 0;
 
 		} else if (value instanceof Long) {
-			int numeric = (Long) value;
+			long numeric = (Long) value;
 			return numeric > 0;
 
 		} else if (value instanceof Short) {
-			int numeric = (Short) value;
+			short numeric = (Short) value;
 			return numeric > 0;
 
 		} else if (value == null) {
