@@ -129,7 +129,7 @@ public class TiConvert
 	}
 
 	/**
-	 * This is a wrapper method. 
+	 * This is a wrapper method.
 	 * Refer to {@link TiColorHelper#parseColor(String)} for more details.
 	 * @param value  color value to convert.
 	 * @return an int representation of the color.
@@ -141,7 +141,7 @@ public class TiConvert
 	}
 
 	/**
-	 * This is a wrapper method. 
+	 * This is a wrapper method.
 	 * Refer to {@link TiColorHelper#parseColor(String)} for more details.
 	 * @param hashMap the HashMap contains the String representation of the color.
 	 * @param key the color lookup key.
@@ -341,7 +341,7 @@ public class TiConvert
 	}
 
 	/**
-	 * Attempts to convert a value into a boolean, if value is a Boolean or String. Otherwise,
+	 * Attempts to convert a value into a boolean, if value is a Boolean, Integer or String. Otherwise,
 	 * an exception is thrown.
 	 * @param value the value to convert.
 	 * @return a boolean value.
@@ -356,8 +356,19 @@ public class TiConvert
 			return Boolean.parseBoolean(((String) value));
 
 		} else if (value instanceof Integer) {
-			// in Javascript anything other than zero is 'true'
-			return ((Integer) value) != 0;
+			int numeric = (Integer) value;
+			return numeric > 0;
+
+		} else if (value instanceof Long) {
+			int numeric = (Long) value;
+			return numeric > 0;
+
+		} else if (value instanceof Short) {
+			int numeric = (Short) value;
+			return numeric > 0;
+
+		} else if (value == null) {
+			return false;
 
 		} else {
 			throw new IllegalArgumentException(
@@ -645,7 +656,7 @@ public class TiConvert
 	}
 
 	/**
-	 * Converts value to String, and if value is a Number, appends "px" to value, 
+	 * Converts value to String, and if value is a Number, appends "px" to value,
 	 * then creates and returns a new TiDimension object with the new value and valueType.
 	 * Refer to {@link TiDimension#TiDimension(String, int)} for more details.
 	 * @param value the dimension value.
@@ -675,7 +686,7 @@ public class TiConvert
 	}
 
 	/**
-	 * Returns a url string by appending the 
+	 * Returns a url string by appending the
 	 * String representation of 'uri' to file:///android_asset/Resources/
 	 * @param uri the uri, cannot be null.
 	 * @return url string.
