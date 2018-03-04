@@ -356,6 +356,21 @@ public class TiConvert
 		} else if (value instanceof String) {
 			return Boolean.parseBoolean(((String) value));
 
+		} else if (value instanceof Integer) {
+			int numeric = (Integer) value;
+			return numeric > 0;
+
+		} else if (value instanceof Long) {
+			long numeric = (Long) value;
+			return numeric > 0;
+
+		} else if (value instanceof Short) {
+			short numeric = (Short) value;
+			return numeric > 0;
+
+		} else if (value == null) {
+			return false;
+
 		} else {
 			throw new IllegalArgumentException("Unable to convert " + (value == null ? "null" : value.getClass().getName()) + " to boolean.");
 		}
