@@ -341,7 +341,7 @@ public class TiConvert
 	}
 
 	/**
-	 * Attempts to convert a value into a boolean, if value is a Boolean or String. Otherwise,
+	 * Attempts to convert a value into a boolean, if value is a Boolean, Integer or String. Otherwise,
 	 * an exception is thrown.
 	 * @param value the value to convert.
 	 * @return a boolean value.
@@ -354,6 +354,21 @@ public class TiConvert
 
 		} else if (value instanceof String) {
 			return Boolean.parseBoolean(((String) value));
+
+		} else if (value instanceof Integer) {
+			int numeric = (Integer) value;
+			return numeric > 0;
+
+		} else if (value instanceof Long) {
+			int numeric = (Long) value;
+			return numeric > 0;
+
+		} else if (value instanceof Short) {
+			int numeric = (Short) value;
+			return numeric > 0;
+
+		} else if (value == null) {
+			return false;
 
 		} else {
 			throw new IllegalArgumentException(
