@@ -2,6 +2,7 @@ package ti.modules.titanium.media;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.HashMap;
 
 import org.appcelerator.kroll.KrollDict;
 import org.appcelerator.kroll.common.Log;
@@ -169,14 +170,19 @@ public class TiThumbnailRetriever implements Handler.Callback{
 					} else {
 						mUri = TiUIHelper.getRedirectUri(mUri);
 						if (Build.VERSION.SDK_INT >= 14){
-							// phobeous - 2017.12.08: actually this is not necessari for .setDataSource(Context ctx, Uri uri) but for .setDataSource(Context ct, Uri uri, Map<String, String> headers)
+							// phobeous - 2017.12.08: actually this is not necessary for .setDataSource(Context ctx, Uri uri) but for .setDataSource(Context ct, Uri uri, Map<String, String> headers)
 							// so something is telling me that headers were considered at some past time
-							//mMediaMetadataRetriever.setDataSource(TiApplication.getAppRootOrCurrentActivity(), mUri);
+							mMediaMetadataRetriever.setDataSource(TiApplication.getAppRootOrCurrentActivity(), mUri);
+							// phobeous - 2018.03.04: revert changes as setDataSource with 3 params expects 1st one to be FileDescriptor, not Context.
+							// We'll have to search another way to include http headers in videos
+							/*HashMap<String, String> httpHeaders = new HashMap<String,String>();
+							httpHeaders.put("User-Agent", System.getProperty("http.agent"));
+							mMediaMetadataRetriever.setDataSource(TiApplication.getAppRootOrCurrentActivity(), mUri, httpHeaders);*/
+						} else{
 							HashMap<String, String> httpHeaders = new HashMap<String,String>();
 							httpHeaders.put("User-Agent", System.getProperty("http.agent"));
-							mMediaMetadataRetriever.setDataSource(TiApplication.getAppRootOrCurrentActivity(), mUri, httpHeaders);
-						} else{
-							mMediaMetadataRetriever.setDataSource(mUri.toString());
+							//mMediaMetadataRetriever.setDataSource(mUri.toString());
+							mMediaMetadataRetriever.setDataSource(mUri.toString(), httpHeaders);
 						}
 					}
 				} catch (IOException ex) {
