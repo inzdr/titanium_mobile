@@ -171,10 +171,11 @@ public class TiThumbnailRetriever implements Handler.Callback{
 						if (Build.VERSION.SDK_INT >= 14){
 							// phobeous - 2017.12.08: actually this is not necessari for .setDataSource(Context ctx, Uri uri) but for .setDataSource(Context ct, Uri uri, Map<String, String> headers)
 							// so something is telling me that headers were considered at some past time
-							//mMediaMetadataRetriever.setDataSource(TiApplication.getAppRootOrCurrentActivity(), mUri);
-							HashMap<String, String> httpHeaders = new HashMap<String,String>();
+							// phobeous - 2018.03.23: change reverted as the method is not supported (wrong params type)
+							mMediaMetadataRetriever.setDataSource(TiApplication.getAppRootOrCurrentActivity(), mUri);
+							/*HashMap<String, String> httpHeaders = new HashMap<String,String>();
 							httpHeaders.put("User-Agent", System.getProperty("http.agent"));
-							mMediaMetadataRetriever.setDataSource(TiApplication.getAppRootOrCurrentActivity(), mUri, httpHeaders);
+							mMediaMetadataRetriever.setDataSource(TiApplication.getAppRootOrCurrentActivity(), mUri, httpHeaders);*/
 						} else{
 							mMediaMetadataRetriever.setDataSource(mUri.toString());
 						}
