@@ -586,7 +586,7 @@ public class TiCameraActivity extends TiBaseActivity implements SurfaceHolder.Ca
 
 	/**
 	 * Computes the optimal preview size given the target display size and aspect ratio.
-	 * 
+	 *
 	 * @param supportPreviewSizes
 	 *            a list of preview sizes the camera supports
 	 * @param targetSize
@@ -630,9 +630,9 @@ public class TiCameraActivity extends TiBaseActivity implements SurfaceHolder.Ca
 	}
 
 	/**
-	 * Computes the optimal picture size given the preview size. 
+	 * Computes the optimal picture size given the preview size.
 	 * This returns the maximum resolution size.
-	 * 
+	 *
 	 * @param sizes
 	 *            a list of picture sizes the camera supports
 	 * @return the optimal size of the picture
@@ -682,6 +682,7 @@ public class TiCameraActivity extends TiBaseActivity implements SurfaceHolder.Ca
 				if (MEDIA_TYPE_VIDEO.equals(mediaType)) {
 					extension = ".mp4";
 				}
+				*/
 				imageFile = TiFileFactory.createDataFile("tia", extension);
 			}
 
