@@ -74,10 +74,10 @@ static NSUncaughtExceptionHandler *prevUncaughtExceptionHandler = NULL;
       [formattedStackTrace addObject:line];
     }
 
-    NSString *stackTrace = [formattedStackTrace componentsJoinedByString:@"\n"];
-    [[TiApp app] showModalError:[NSString stringWithFormat:@"%@\n\n%@", [error description], stackTrace]];
+    NSString *stacktrace = [formattedStackTrace componentsJoinedByString:@"\n"];
+    [[TiApp app] showModalError:[NSString stringWithFormat:@"%@\n\n%@", [error description], stacktrace]];
     NSMutableDictionary *errorDict = [error.dictionaryValue mutableCopy];
-    [errorDict setObject:stackTrace forKey:@"stackTrace"];
+    [errorDict setObject:stacktrace forKey:@"stacktrace"];
     [[NSNotificationCenter defaultCenter] postNotificationName:kTiErrorNotification
                                                         object:self
                                                       userInfo:errorDict];
