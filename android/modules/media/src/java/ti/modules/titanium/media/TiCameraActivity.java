@@ -682,7 +682,6 @@ public class TiCameraActivity extends TiBaseActivity implements SurfaceHolder.Ca
 				if (MEDIA_TYPE_VIDEO.equals(mediaType)) {
 					extension = ".mp4";
 				}
-				*/
 				imageFile = TiFileFactory.createDataFile("tia", extension);
 			}
 
