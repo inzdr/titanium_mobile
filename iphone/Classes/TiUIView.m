@@ -1318,7 +1318,7 @@ DEFINE_EXCEPTIONS
 {
   if (handlesTouches) {
     UITouch *touch = [touches anyObject];
-    NSDictionary *globalTouch = [TiUtils touchPropertiesToDictionary:touch andPoint:[touch locationInView:[UIApplication sharedApplication].keyWindow.rootViewController.view]];
+    NSDictionary *globalTouch = [TiUtils touchPropertiesToDictionary:touch andView:[UIApplication sharedApplication].keyWindow.rootViewController.view];
     NSMutableDictionary *evt = [NSMutableDictionary dictionaryWithDictionary:[TiUtils touchPropertiesToDictionary:touch andView:self]];
     [evt setObject:globalTouch forKey:@"globalPoint"];
     if ([proxy _hasListeners:@"touchend"]) {
