@@ -175,7 +175,7 @@ public abstract class TiApplication extends Application implements KrollApplicat
 			.append("; Android API Level: ")
 			.append(Integer.toString(Build.VERSION.SDK_INT))
 			.append("; ")
-			.append(TiPlatformHelper.getInstance().getLocale())
+			.append(org.appcelerator.titanium.util.TiPlatformHelper.getInstance().getLocale())
 			.append(";)");
 
 		return builder.toString();

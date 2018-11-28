@@ -678,6 +678,7 @@ public class TiCameraActivity extends TiBaseActivity implements SurfaceHolder.Ca
 				imageFile = MediaModule.createGalleryImageFile();
 			} else {
 				// Save the picture in the internal data directory so it is private to this application.
+				String extension = ".jpg";
 				// 2018.04.04-phobeous:
 				// This has no sense. The only point where this method is called is in jpegCallback and
 				// video recording creates his own file. So this is absolutely wrong
