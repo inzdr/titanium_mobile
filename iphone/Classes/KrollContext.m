@@ -911,9 +911,10 @@ static TiValueRef StringFormatDecimalCallback(TiContextRef jsContext, TiObjectRe
                            toTarget:self
                          withObject:nil];
 #else
-  TiThreadPerformOnMainThread(^{
-    [self main];
-  },
+  TiThreadPerformOnMainThread(
+      ^{
+        [self main];
+      },
       NO);
 #endif
 }
@@ -1464,9 +1465,10 @@ static TiValueRef StringFormatDecimalCallback(TiContextRef jsContext, TiObjectRe
   TiObjectDeleteProperty(context, globalRef, prop, NULL); //TODO: This still needed?
   TiStringRelease(prop);
 
-  TiThreadPerformOnMainThread(^{
-    [self unregisterForNotifications];
-  },
+  TiThreadPerformOnMainThread(
+      ^{
+        [self unregisterForNotifications];
+      },
       NO);
   [self forceGarbageCollectNow];
   // cause the global context to be released and all objects internally to be finalized
@@ -1568,7 +1570,7 @@ static TiValueRef StringFormatDecimalCallback(TiContextRef jsContext, TiObjectRe
 
 @implementation KrollTimerTarget
 
-- (instancetype)initWithCallback:(JSValue *)callback arguments:(NSArray<NSValue *> *)arguments
+- (instancetype)initWithCallback:(JSValue *)callback arguments:(NSArray<JSValue *> *)arguments
 {
   self = [super init];
   if (!self) {

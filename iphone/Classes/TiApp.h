@@ -58,7 +58,7 @@ TI_INLINE void waitForMemoryPanicCleared() //WARNING: This must never be run on 
   NSMutableDictionary *queuedBootEvents;
   NSMutableDictionary<NSString *, NSOrderedSet<id> *> *_queuedApplicationSelectors;
   NSMutableSet<id> *_applicationDelegates;
-  NSMutableDictionary* uploadTaskResponses;
+  NSMutableDictionary *uploadTaskResponses;
   BOOL appBooted;
 
   NSString *sessionId;
