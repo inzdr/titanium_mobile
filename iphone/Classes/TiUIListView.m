@@ -1,8 +1,10 @@
 /**
  * Appcelerator Titanium Mobile
- * Copyright (c) 2013-2015 by Appcelerator, Inc. All Rights Reserved.
+ * Copyright (c) 2009-2019 by Appcelerator, Inc. All Rights Reserved.
  * Licensed under the terms of the Apache Public License
  * Please see the LICENSE included with this distribution for details.
+ *
+ * WARNING: This is generated code. Modify at your own risk and without support.
  */
 #ifdef USE_TI_UILISTVIEW
 #import "TiUIListView.h"
@@ -25,7 +27,30 @@
 @property (nonatomic, copy, readwrite) NSString *searchedString;
 @end
 
-static TiViewProxy *FindViewProxyWithBindIdContainingPoint(UIView *view, CGPoint point);
+TiViewProxy *FindViewProxyWithBindIdContainingPoint(UIView *view, CGPoint point)
+{
+  if (!CGRectContainsPoint([view bounds], point)) {
+    return nil;
+  }
+  for (int i = (int)[view.subviews count] - 1; i >= 0; i--) {
+    UIView *subview = [view.subviews objectAtIndex:i];
+    TiViewProxy *viewProxy = FindViewProxyWithBindIdContainingPoint(subview, [view convertPoint:point toView:subview]);
+    if (viewProxy != nil) {
+      id bindId = [viewProxy valueForKey:@"bindId"];
+      if (bindId != nil) {
+        return viewProxy;
+      }
+    }
+  }
+  if ([view isKindOfClass:[TiUIView class]]) {
+    TiViewProxy *viewProxy = (TiViewProxy *)[(TiUIView *)view proxy];
+    id bindId = [viewProxy valueForKey:@"bindId"];
+    if (bindId != nil) {
+      return viewProxy;
+    }
+  }
+  return nil;
+}
 
 @implementation TiUIListView {
   UITableView *_tableView;
@@ -325,12 +350,12 @@ static TiViewProxy *FindViewProxyWithBindIdContainingPoint(UIView *view, CGPoint
           UIView *headerView = [[self tableView] tableHeaderView];
           [headerView setFrame:[headerView bounds]];
           [[self tableView] setTableHeaderView:headerView];
-          [((TiUIListViewProxy *)[self proxy]) contentsWillChange];
+          [((TiUIListViewProxy *)[self proxy])contentsWillChange];
         } else if (sender == _footerViewProxy) {
           UIView *footerView = [[self tableView] tableFooterView];
           [footerView setFrame:[footerView bounds]];
           [[self tableView] setTableFooterView:footerView];
-          [((TiUIListViewProxy *)[self proxy]) contentsWillChange];
+          [((TiUIListViewProxy *)[self proxy])contentsWillChange];
         } else if (sender == _pullViewProxy) {
           pullThreshhold = ([_pullViewProxy view].frame.origin.y - _pullViewWrapper.bounds.size.height);
         }
@@ -2518,30 +2543,5 @@ static TiViewProxy *FindViewProxyWithBindIdContainingPoint(UIView *view, CGPoint
 }
 
 @end
-
-static TiViewProxy *FindViewProxyWithBindIdContainingPoint(UIView *view, CGPoint point)
-{
-  if (!CGRectContainsPoint([view bounds], point)) {
-    return nil;
-  }
-  for (int i = (int)[view.subviews count] - 1; i >= 0; i--) {
-    UIView *subview = [view.subviews objectAtIndex:i];
-    TiViewProxy *viewProxy = FindViewProxyWithBindIdContainingPoint(subview, [view convertPoint:point toView:subview]);
-    if (viewProxy != nil) {
-      id bindId = [viewProxy valueForKey:@"bindId"];
-      if (bindId != nil) {
-        return viewProxy;
-      }
-    }
-  }
-  if ([view isKindOfClass:[TiUIView class]]) {
-    TiViewProxy *viewProxy = (TiViewProxy *)[(TiUIView *)view proxy];
-    id bindId = [viewProxy valueForKey:@"bindId"];
-    if (bindId != nil) {
-      return viewProxy;
-    }
-  }
-  return nil;
-}
 
 #endif
