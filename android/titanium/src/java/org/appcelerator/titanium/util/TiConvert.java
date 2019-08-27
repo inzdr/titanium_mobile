@@ -356,8 +356,19 @@ public class TiConvert
 			return Boolean.parseBoolean(((String) value));
 
 		} else if (value instanceof Integer) {
-			// in Javascript anything other than zero is 'true'
-			return ((Integer) value) != 0;
+			int numeric = (Integer) value;
+			return numeric > 0;
+
+		} else if (value instanceof Long) {
+			long numeric = (Long) value;
+			return numeric > 0;
+
+		} else if (value instanceof Short) {
+			short numeric = (Short) value;
+			return numeric > 0;
+
+		} else if (value == null) {
+			return false;
 
 		} else {
 			throw new IllegalArgumentException(
