@@ -732,9 +732,12 @@ public class TiHTTPClient
 
 	public void clearCookies(String url)
 	{
+		// 2019.08.27 - phobeous@iNZDR : merged from 8.1.X
+		// -->
 		if (url == null) {
 			return;
 		}
+		// <--
 
 		List<HttpCookie> cookies = new ArrayList<HttpCookie>(cookieManager.getCookieStore().getCookies());
 		cookieManager.getCookieStore().removeAll();
@@ -896,7 +899,9 @@ public class TiHTTPClient
 		}
 
 		setReadyState(READY_STATE_OPENED);
-		setRequestHeader("User-Agent", TITANIUM_USER_AGENT);
+		// phobeous - 2017.11.28 : once that we added Ti.setUserAgent, there's no need to explicitly set here
+		//setRequestHeader("User-Agent", TITANIUM_USER_AGENT);
+
 		// Causes Auth to Fail with twitter and other size apparently block X- as well
 		// Ticket #729, ignore twitter for now
 		if (!hostString.contains("twitter.com")) {
@@ -923,7 +928,13 @@ public class TiHTTPClient
 			// so we send an empty string by default instead which will cause the
 			// StringBody to not include the content-type header. this should be
 			// harmless for all other cases
-			parts.put(name, new StringBody(value, "", null));
+			// phobeous@iNZDR (2017/05/03): This is causing issue #154 (text aren't processed by server)
+			//parts.put(name, new StringBody(value,"",null));
+			parts.put(
+				name,
+				new StringBody(
+					value, Charset.forName(
+							   "UTF-8"))); // We use other constructor that sets content-type and force UTF-8 encoding
 		} else {
 			nvPairs.add(new NameValuePair(name, value.toString()));
 		}
