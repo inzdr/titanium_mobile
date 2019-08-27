@@ -22,6 +22,7 @@ import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.ViewParent;
+import android.webkit.PermissionRequest;
 import org.appcelerator.kroll.KrollDict;
 import org.appcelerator.kroll.KrollProxy;
 import org.appcelerator.kroll.common.Log;
@@ -313,6 +314,8 @@ public class TiUIWebView extends TiUIView
 		WebSettings settings = webView.getSettings();
 		settings.setUseWideViewPort(true);
 		settings.setJavaScriptEnabled(true);
+		settings.setAllowFileAccessFromFileURLs(true);
+		settings.setAllowUniversalAccessFromFileURLs(true);
 		settings.setMediaPlaybackRequiresUserGesture(false);
 		settings.setSupportMultipleWindows(true);
 		settings.setJavaScriptCanOpenWindowsAutomatically(true);
@@ -351,7 +354,12 @@ public class TiUIWebView extends TiUIView
 
 		boolean enableJavascriptInterface =
 			TiConvert.toBoolean(proxy.getProperty(TiC.PROPERTY_ENABLE_JAVASCRIPT_INTERFACE), true);
-		chromeClient = new TiWebChromeClient(this);
+		chromeClient = new TiWebChromeClient(this) {
+			@Override
+			public void onPermissionRequest(PermissionRequest request) {
+				request.grant(request.getResources());
+			}
+		};
 		webView.setWebChromeClient(chromeClient);
 		client = new TiWebViewClient(this, webView);
 		webView.setWebViewClient(client);
