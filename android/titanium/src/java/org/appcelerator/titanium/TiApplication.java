@@ -37,6 +37,7 @@ import org.appcelerator.kroll.util.TiTempFileHelper;
 import org.appcelerator.titanium.util.TiBlobLruCache;
 import org.appcelerator.titanium.util.TiFileHelper;
 import org.appcelerator.titanium.util.TiImageLruCache;
+import org.appcelerator.titanium.util.TiPlatformHelper;
 import org.appcelerator.titanium.util.TiResponseCache;
 import org.appcelerator.titanium.util.TiUIHelper;
 import org.appcelerator.titanium.util.TiWeakList;
@@ -145,10 +146,43 @@ public abstract class TiApplication extends Application implements KrollApplicat
 		// Keep a reference to this application object. Accessible via static getInstance() method.
 		tiApp = this;
 
+		loadBuildProperties();
+
+		// phobeous - 2017.11.28 : set default user-agent
+		StringBuilder builder = new StringBuilder();
+		String httpAgent = System.getProperty("http.agent");
+		if (httpAgent != null) {
+			builder.append(httpAgent);
+		}
+		builder.append(getTiUserAgentString());
+
+		System.setProperty("http.agent", builder.toString());
+
 		mainThreadId = Looper.getMainLooper().getThread().getId();
 
 		modules = new HashMap<String, WeakReference<KrollModule>>();
 		TiMessenger.getMessenger(); // initialize message queue for main thread
+
+		Log.i(TAG, "Titanium " + buildVersion + " (" + buildTimestamp + " " + buildHash + ")");
+	}
+
+	// phobeous - 2017.11.28 - global method to standarize default Ti User-Agent string
+	public String getTiUserAgentString()
+	{
+		// This is how TiHTTPClient used to build the User-Agent string
+		StringBuilder builder = new StringBuilder();
+
+		builder.append(" Titanium/")
+			.append(getTiBuildVersion())
+			.append(" (")
+			.append(Build.MODEL)
+			.append("; Android API Level: ")
+			.append(Integer.toString(Build.VERSION.SDK_INT))
+			.append("; ")
+			.append(TiPlatformHelper.getInstance().getLocale())
+			.append(";)");
+
+		return builder.toString();
 	}
 
 	/**

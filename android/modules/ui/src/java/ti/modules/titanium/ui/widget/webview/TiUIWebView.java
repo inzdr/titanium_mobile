@@ -22,6 +22,7 @@ import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.ViewParent;
+import android.webkit.PermissionRequest;
 import org.appcelerator.kroll.KrollDict;
 import org.appcelerator.kroll.KrollProxy;
 import org.appcelerator.kroll.common.Log;
@@ -315,6 +316,10 @@ public class TiUIWebView extends TiUIView
 		WebSettings settings = webView.getSettings();
 		settings.setUseWideViewPort(true);
 		settings.setJavaScriptEnabled(true);
+		// 2019.08.23 - rlustemberg@iNZDR : added in 7.4.X_INZDR to ease integration with YouTube iFrame API using WebView
+		settings.setAllowFileAccessFromFileURLs(true);
+		settings.setAllowUniversalAccessFromFileURLs(true);
+		settings.setMediaPlaybackRequiresUserGesture(false);
 		settings.setSupportMultipleWindows(true);
 		settings.setJavaScriptCanOpenWindowsAutomatically(true);
 		settings.setLoadsImagesAutomatically(true);
@@ -331,6 +336,8 @@ public class TiUIWebView extends TiUIView
 			settings.setAppCachePath(cacheDir.getAbsolutePath());
 		}
 
+		// 2019.308.27 - phobeous@iNZDR : merged from 8.1.X
+		// -->
 		// mixed content mode, allow HTTP resource requests from HTTPS page
 		boolean mixedContentMode = TiConvert.toBoolean(proxy.getProperty(TiC.PROPERTY_MIXED_CONTENT_MODE), false);
 		if (mixedContentMode) {
@@ -344,6 +351,7 @@ public class TiUIWebView extends TiUIView
 				// ignore...
 			}
 		}
+		// <--
 
 		// enable zoom controls by default
 		boolean enableZoom = true;
@@ -366,7 +374,14 @@ public class TiUIWebView extends TiUIView
 
 		boolean enableJavascriptInterface =
 			TiConvert.toBoolean(proxy.getProperty(TiC.PROPERTY_ENABLE_JAVASCRIPT_INTERFACE), true);
-		chromeClient = new TiWebChromeClient(this);
+		// 2019.08.23 - rlustemberg@iNZDR : added in 7.4.X_INZDR to ease integration with YouTube iFrame API using WebView
+		chromeClient = new TiWebChromeClient(this) {
+			@Override
+			public void onPermissionRequest(PermissionRequest request)
+			{
+				request.grant(request.getResources());
+			}
+		};
 		webView.setWebChromeClient(chromeClient);
 		client = new TiWebViewClient(this, webView);
 		webView.setWebViewClient(client);
