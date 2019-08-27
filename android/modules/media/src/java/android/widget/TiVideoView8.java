@@ -57,6 +57,7 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.webkit.URLUtil;
 import android.widget.MediaController.MediaPlayerControl;
+import java.util.HashMap; // phobeous
 
 /**
  * Displays a video file. The VideoView class
@@ -372,11 +373,13 @@ public class TiVideoView8 extends SurfaceView implements MediaPlayerControl
 	private void setDataSource()
 	{
 		try {
-			// TIMOB-27493: disable caching, which would otherwise introduce a delay.
-			Map<String, String> headers = new HashMap<>();
-			headers.put("Cache-Control", "no-cache");
-
-			mMediaPlayer.setDataSource(TiApplication.getAppRootOrCurrentActivity(), mUri, headers);
+			mUri = TiUIHelper.getRedirectUri(mUri);
+			//mMediaPlayer.setDataSource(TiApplication.getAppRootOrCurrentActivity(), mUri);
+			// phobeous - 2017.12.08 : we need, at least, user-agent HTTP header. Ideally I think we could restore setVideoURI with headers, but it's enough for now
+			HashMap<String, String> httpHeaders = new HashMap<String, String>();
+			httpHeaders.put("User-Agent", System.getProperty("http.agent"));
+			httpHeaders.put("Cache-Control", "no-cache");
+			mMediaPlayer.setDataSource(TiApplication.getAppRootOrCurrentActivity(), mUri, httpHeaders);
 		} catch (Exception e) {
 			Log.e(TAG, "Error setting video data source: " + e.getMessage(), e);
 		}
