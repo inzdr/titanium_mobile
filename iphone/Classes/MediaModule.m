@@ -1,8 +1,10 @@
 /**
  * Appcelerator Titanium Mobile
- * Copyright (c) 2009-2018 by Appcelerator, Inc. All Rights Reserved.
+ * Copyright (c) 2009-2019 by Appcelerator, Inc. All Rights Reserved.
  * Licensed under the terms of the Apache Public License
  * Please see the LICENSE included with this distribution for details.
+ * 
+ * WARNING: This is generated code. Modify at your own risk and without support.
  */
 #ifdef USE_TI_MEDIA
 
@@ -1734,8 +1736,12 @@ MAKE_SYSTEM_PROP(VIDEO_REPEAT_MODE_ONE, VideoRepeatModeOne);
 - (void)handleTrimmedVideo:(NSURL *)theURL withDictionary:(NSDictionary *)dictionary
 {
   TiBlob *media = [[[TiBlob alloc] initWithFile:[theURL path]] autorelease];
+  if ([media mimeType] == nil) {
+    [media setMimeType:@"video/mpeg" type:TiBlobTypeFile];
+  }
   NSMutableDictionary *eventDict = [NSMutableDictionary dictionaryWithDictionary:dictionary];
   [eventDict setObject:media forKey:@"media"];
+
   if (saveToRoll) {
     NSString *tempFilePath = [theURL absoluteString];
     UISaveVideoAtPathToSavedPhotosAlbum(tempFilePath, nil, nil, NULL);
@@ -2020,7 +2026,7 @@ MAKE_SYSTEM_PROP(VIDEO_REPEAT_MODE_ONE, VideoRepeatModeOne);
 
     UIImage *thumbnailImage = [editingInfo objectForKey:UIImagePickerControllerOriginalImage];
     thumbnail = [[[TiBlob alloc] initWithImage:thumbnailImage] autorelease];
-
+    PHAsset *asset = [editingInfo objectForKey:UIImagePickerControllerPHAsset];
     if (picker.allowsEditing) {
       NSNumber *startTime = [editingInfo objectForKey:@"_UIImagePickerControllerVideoEditingStart"];
       NSNumber *endTime = [editingInfo objectForKey:@"_UIImagePickerControllerVideoEditingEnd"];
@@ -2040,8 +2046,10 @@ MAKE_SYSTEM_PROP(VIDEO_REPEAT_MODE_ONE, VideoRepeatModeOne);
         AVAssetExportSession *exportSession = [[AVAssetExportSession alloc] initWithAsset:videoAsset presetName:AVAssetExportPresetHighestQuality];
         exportSession.outputURL = [NSURL fileURLWithPath:outputURL isDirectory:NO];
         exportSession.outputFileType = AVFileTypeQuickTimeMovie;
-        CMTimeRange timeRange = CMTimeRangeMake(CMTimeMake(startMilliseconds, 1000), CMTimeMake(endMilliseconds - startMilliseconds, 1000));
-        exportSession.timeRange = timeRange;
+        if ((startTime != nil) && (endTime != nil)) {
+          CMTimeRange timeRange = CMTimeRangeMake(CMTimeMake(startMilliseconds, 1000), CMTimeMake(endMilliseconds - startMilliseconds, 1000));
+          exportSession.timeRange = timeRange;
+        }
 
         NSMutableDictionary *dictionary = [TiUtils dictionaryWithCode:0 message:nil];
         [dictionary setObject:mediaType forKey:@"mediaType"];
@@ -2064,16 +2072,33 @@ MAKE_SYSTEM_PROP(VIDEO_REPEAT_MODE_ONE, VideoRepeatModeOne);
         }];
         return;
       }
+      PHVideoRequestOptions *options = [PHVideoRequestOptions new];
+      options.version = PHVideoRequestOptionsVersionOriginal;
+      [[PHImageManager defaultManager] requestAVAssetForVideo:asset
+                                                      options:options
+                                                resultHandler:
+                                                    ^(AVAsset *_Nullable avasset,
+                                                        AVAudioMix *_Nullable audioMix,
+                                                        NSDictionary *_Nullable info) {
+                                                      NSError *error;
+                                                      AVURLAsset *avurlasset = (AVURLAsset *)avasset;
+
+                                                      // Write to documents folder
+                                                      NSString *basePath = [NSTemporaryDirectory() stringByAppendingPathComponent:[NSUUID UUID].UUIDString];
+                                                      NSString *videoPath = [basePath stringByAppendingPathExtension:@"mov"];
+                                                      NSURL *fileURL = [NSURL fileURLWithPath:videoPath];
+                                                      if ([[NSFileManager defaultManager] copyItemAtURL:avurlasset.URL
+                                                                                                  toURL:fileURL
+                                                                                                  error:&error]) {
+                                                        NSLog(@"Copied correctly");
+                                                        NSMutableDictionary *dictionary = [TiUtils dictionaryWithCode:0 message:nil];
+                                                        [dictionary setObject:mediaType forKey:@"mediaType"];
+                                                        [self handleTrimmedVideo:fileURL withDictionary:dictionary];
+                                                      }
+                                                    }];
+      return;
     }
 
-    media = [[[TiBlob alloc] initWithFile:[mediaURL path]] autorelease];
-    if ([media mimeType] == nil) {
-      [media setMimeType:@"video/mpeg" type:TiBlobTypeFile];
-    }
-    if (saveToRoll) {
-      NSString *tempFilePath = [mediaURL path];
-      UISaveVideoAtPathToSavedPhotosAlbum(tempFilePath, nil, nil, NULL);
-    }
   } else {
     UIImage *editedImage = [editingInfo objectForKey:UIImagePickerControllerEditedImage];
     if ((mediaURL != nil) && (editedImage == nil)) {
