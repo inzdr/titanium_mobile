@@ -50,7 +50,8 @@ enum {
   MediaModuleErrorBusy,
   MediaModuleErrorNoCamera,
   MediaModuleErrorNoVideo,
-  MediaModuleErrorNoMusicPlayer
+  MediaModuleErrorNoMusicPlayer,
+  MediaModuleErrorNotAuthorized
 };
 
 // Have to distinguish between filterable and nonfilterable properties
@@ -2064,30 +2065,38 @@ MAKE_SYSTEM_PROP(VIDEO_REPEAT_MODE_ONE, VideoRepeatModeOne);
         }];
         return;
       }
-      PHVideoRequestOptions *options = [PHVideoRequestOptions new];
-      options.version = PHVideoRequestOptionsVersionOriginal;
-      [[PHImageManager defaultManager] requestAVAssetForVideo:asset
-                                                      options:options
-                                                resultHandler:
-                                                    ^(AVAsset *_Nullable avasset,
-                                                        AVAudioMix *_Nullable audioMix,
-                                                        NSDictionary *_Nullable info) {
-                                                      NSError *error;
-                                                      AVURLAsset *avurlasset = (AVURLAsset *)avasset;
+      [PHPhotoLibrary requestAuthorization:^(PHAuthorizationStatus status) {
+        if (status == PHAuthorizationStatusAuthorized) {
+          PHVideoRequestOptions *options = [PHVideoRequestOptions new];
+          options.version = PHVideoRequestOptionsVersionOriginal;
+          [[PHImageManager defaultManager] requestAVAssetForVideo:asset
+                                                          options:options
+                                                    resultHandler:
+                                                        ^(AVAsset *_Nullable avasset,
+                                                            AVAudioMix *_Nullable audioMix,
+                                                            NSDictionary *_Nullable info) {
+                                                          NSError *error;
+                                                          AVURLAsset *avurlasset = (AVURLAsset *)avasset;
 
-                                                      // Write to documents folder
-                                                      NSString *basePath = [NSTemporaryDirectory() stringByAppendingPathComponent:[NSUUID UUID].UUIDString];
-                                                      NSString *videoPath = [basePath stringByAppendingPathExtension:@"mov"];
-                                                      NSURL *fileURL = [NSURL fileURLWithPath:videoPath];
-                                                      if ([[NSFileManager defaultManager] copyItemAtURL:avurlasset.URL
-                                                                                                  toURL:fileURL
-                                                                                                  error:&error]) {
-                                                        NSLog(@"Copied correctly");
-                                                        NSMutableDictionary *dictionary = [TiUtils dictionaryWithCode:0 message:nil];
-                                                        [dictionary setObject:mediaType forKey:@"mediaType"];
-                                                        [self handleTrimmedVideo:fileURL withDictionary:dictionary];
-                                                      }
-                                                    }];
+                                                          // Write to documents folder
+                                                          NSString *basePath = [NSTemporaryDirectory() stringByAppendingPathComponent:[NSUUID UUID].UUIDString];
+                                                          NSString *videoPath = [basePath stringByAppendingPathExtension:@"mov"];
+                                                          NSURL *fileURL = [NSURL fileURLWithPath:videoPath];
+                                                          if ([[NSFileManager defaultManager] copyItemAtURL:avurlasset.URL
+                                                                                                      toURL:fileURL
+                                                                                                      error:&error]) {
+                                                            NSLog(@"Copied correctly");
+                                                            NSMutableDictionary *dictionary = [TiUtils dictionaryWithCode:0 message:nil];
+                                                            [dictionary setObject:mediaType forKey:@"mediaType"];
+                                                            [self handleTrimmedVideo:fileURL withDictionary:dictionary];
+                                                          }
+                                                        }];
+
+        } else {
+          [self sendPickerError:MediaModuleErrorNotAuthorized];
+        }
+      }];
+
       return;
     }
 
