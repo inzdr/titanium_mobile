@@ -143,7 +143,9 @@ public abstract class TiApplication extends Application implements KrollApplicat
 		// Keep a reference to this application object. Accessible via static getInstance() method.
 		tiApp = this;
 
-		loadBuildProperties();
+		// phobeous - 2020.05.07 : this has been refactored and the loadBuildProperties method removed
+		//    If we need build properties, we can use getTiBuildVersion() / getSDKVersion()
+		//loadBuildProperties();
 
 		// phobeous - 2017.11.28 : set default user-agent
 		StringBuilder builder = new StringBuilder();
@@ -160,7 +162,11 @@ public abstract class TiApplication extends Application implements KrollApplicat
 		modules = new HashMap<String, WeakReference<KrollModule>>();
 		TiMessenger.getMessenger(); // initialize message queue for main thread
 
-		Log.i(TAG, "Titanium " + buildVersion + " (" + buildTimestamp + " " + buildHash + ")");
+		// 2020.05.07 - phobeous: 8.x -> 9.x
+		//	buildVersion -> getSDKVersion()
+		//	buildTimestamp -> getTiBuildTimestamp()
+		//	buildHash -> getTiBuildHash()
+		Log.i(TAG, "Titanium " + getSDKVersion() + " (" + getTiBuildTimestamp() + " " + getTiBuildHash() + ")");
 	}
 
 	// phobeous - 2017.11.28 - global method to standarize default Ti User-Agent string
