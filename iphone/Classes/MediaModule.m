@@ -1800,6 +1800,7 @@ MAKE_SYSTEM_PROP(VIDEO_REPEAT_MODE_ONE, VideoRepeatModeOne);
   }
 
   animatedPicker = YES;
+  excludeLivePhoto = YES;
 
   PHPickerConfiguration *configuration = [[PHPickerConfiguration alloc] init];
   NSMutableArray *filterList = [NSMutableArray array];
@@ -1816,6 +1817,7 @@ MAKE_SYSTEM_PROP(VIDEO_REPEAT_MODE_ONE, VideoRepeatModeOne);
         if ([mediaType isEqualToString:(NSString *)kUTTypeImage]) {
           [filterList addObject:PHPickerFilter.imagesFilter];
         } else if ([mediaType isEqualToString:(NSString *)kUTTypeLivePhoto]) {
+          excludeLivePhoto = NO;
           [filterList addObject:PHPickerFilter.livePhotosFilter];
         } else if ([mediaType isEqualToString:(NSString *)kUTTypeMovie]) {
           [filterList addObject:PHPickerFilter.videosFilter];
@@ -1856,7 +1858,8 @@ MAKE_SYSTEM_PROP(VIDEO_REPEAT_MODE_ONE, VideoRepeatModeOne);
   for (PHPickerResult *result in results) {
     dispatch_group_enter(group);
 
-    if ([result.itemProvider canLoadObjectOfClass:PHLivePhoto.class]) {
+    // Live photo has image data as well. Untill live photo is not required, do not load it. Instead load image data.
+    if (!excludeLivePhoto && [result.itemProvider canLoadObjectOfClass:PHLivePhoto.class]) {
       if (!livePhotoArray) {
         livePhotoArray = [[NSMutableArray alloc] init];
       }
@@ -2023,7 +2026,7 @@ MAKE_SYSTEM_PROP(VIDEO_REPEAT_MODE_ONE, VideoRepeatModeOne);
 - (void)presentationControllerDidDismiss:(UIPresentationController *)presentationController
 {
 #if defined(USE_TI_MEDIASHOWCAMERA) || defined(USE_TI_MEDIAOPENPHOTOGALLERY) || defined(USE_TI_MEDIASTARTVIDEOEDITING)
-#if IS_SDK_IOS_14
+#if IS_SDK_IOS_14 && defined(USE_TI_MEDIAOPENPHOTOGALLERY)
   [self closeModalPicker:picker ?: _phPicker];
 #else
   [self closeModalPicker:picker];
