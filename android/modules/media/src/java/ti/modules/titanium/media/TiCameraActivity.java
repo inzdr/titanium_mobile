@@ -668,41 +668,24 @@ public class TiCameraActivity extends TiBaseActivity implements SurfaceHolder.Ca
 
 	private static File writeToFile(byte[] data, boolean saveToGallery) throws Throwable
 	{
-		try {
-			File imageFile = null;
-			if (saveToGallery) {
-				imageFile = MediaModule.createGalleryImageFile();
-			} else {
-				// Save the picture in the internal data directory so it is private to this application.
-				String extension = ".jpg";
-				// 2018.04.04-phobeous:
-				// This has no sense. The only point where this method is called is in jpegCallback and
-				// video recording creates his own file. So this is absolutely wrong
-				// Let's comment out next if block
-				/*
-				if (MEDIA_TYPE_VIDEO.equals(mediaType)) {
-					extension = ".mp4";
-				}
-				*/
-				imageFile = TiFileFactory.createDataFile("tia", extension);
-			}
+		final boolean isVideo = MEDIA_TYPE_VIDEO.equals(mediaType);
+		final String extension = isVideo ? ".mp4" : ".jpg";
+		final File mediaFile = MediaModule.createExternalStorageFile(
+			extension, isVideo ? Environment.DIRECTORY_MOVIES : Environment.DIRECTORY_PICTURES, saveToGallery);
+		final Uri mediaUri = MediaModule.getMediaUriFrom(mediaFile);
+		final OutputStream mediaOutputStream =
+			TiApplication.getInstance().getContentResolver().openOutputStream(mediaUri);
 
-			FileOutputStream imageOut = new FileOutputStream(imageFile);
-			imageOut.write(data);
-			imageOut.close();
+		BufferedOutputStream imageOut = new BufferedOutputStream(mediaOutputStream);
+		imageOut.write(data);
+		imageOut.close();
 
-			if (saveToGallery) {
-				Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-				Uri contentUri = Uri.fromFile(imageFile);
-				mediaScanIntent.setData(contentUri);
-				Activity activity = TiApplication.getAppCurrentActivity();
-				activity.sendBroadcast(mediaScanIntent);
-			}
-			return imageFile;
-
-		} catch (Throwable t) {
-			throw t;
+		if (saveToGallery) {
+			Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+			mediaScanIntent.setData(mediaUri);
+			TiApplication.getInstance().sendBroadcast(mediaScanIntent);
 		}
+		return mediaFile;
 	}
 
 	static public void takePicture()

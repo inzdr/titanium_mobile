@@ -57,6 +57,7 @@ import android.view.View;
 import android.webkit.URLUtil;
 import android.widget.MediaController.MediaPlayerControl;
 import java.util.HashMap; // phobeous
+import org.appcelerator.titanium.util.TiUIHelper; // phobeous
 
 /**
  * Displays a video file. The VideoView class
