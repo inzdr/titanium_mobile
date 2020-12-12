@@ -974,7 +974,7 @@ public class TiHTTPClient
 			// parts.put(name, new StringBody(value,"",null));
 			// phobeous@iNZDR (2017/05/03): This is causing issue #154 (text aren't processed by server)
 			// We use other constructor that sets content-type and force UTF-8 encoding
-			parts.put(name, new StringBody( value, Charset.forName("UTF-8")));
+			parts.put(name, new StringBody(value, Charset.forName("UTF-8")));
 		} else {
 			nvPairs.add(new NameValuePair(name, value.toString()));
 		}

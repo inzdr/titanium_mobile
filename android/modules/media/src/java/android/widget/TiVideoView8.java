@@ -26,13 +26,11 @@
 
 package android.widget;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.appcelerator.kroll.common.Log;
 import org.appcelerator.titanium.TiApplication;
-import org.appcelerator.titanium.util.TiPlatformHelper;
 
 import ti.modules.titanium.media.MediaModule;
 import ti.modules.titanium.media.TiPlaybackListener;
