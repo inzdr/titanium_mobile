@@ -26,11 +26,13 @@
 
 package android.widget;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.appcelerator.kroll.common.Log;
 import org.appcelerator.titanium.TiApplication;
+import org.appcelerator.titanium.util.TiPlatformHelper;
 
 import ti.modules.titanium.media.MediaModule;
 import ti.modules.titanium.media.TiPlaybackListener;
@@ -50,6 +52,8 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.webkit.URLUtil;
 import android.widget.MediaController.MediaPlayerControl;
+import java.util.HashMap; // phobeous
+import org.appcelerator.titanium.util.TiUIHelper; // phobeous
 
 /**
  * Displays a video file. The VideoView class
@@ -341,8 +345,11 @@ public class TiVideoView8 extends SurfaceView implements MediaPlayerControl
 	private void setDataSource()
 	{
 		try {
+			mUri = TiUIHelper.getRedirectUri(mUri);
 			// TIMOB-27493: disable caching, which would otherwise introduce a delay.
+			// phobeous - 2017.12.08 : we need, at least, user-agent HTTP header. Ideally I think we could restore setVideoURI with headers, but it's enough for now
 			Map<String, String> headers = new HashMap<>();
+			headers.put("User-Agent", System.getProperty("http.agent"));
 			headers.put("Cache-Control", "no-cache");
 
 			mMediaPlayer.setDataSource(TiApplication.getAppRootOrCurrentActivity(), mUri, headers);
