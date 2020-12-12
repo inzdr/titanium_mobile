@@ -353,15 +353,18 @@ public class TiConvert
 			return (Boolean) value;
 
 		} else if (value instanceof String) {
-			return Boolean.parseBoolean(((String) value));
+			//return Boolean.parseBoolean(((String) value));
+			// phobeous-2020.12.12: in Javascript anything other than "" is 'true'
+			return !value.equals("");
 
 		} else if (value instanceof Integer) {
 			// in Javascript anything other than zero is 'true'
 			return ((Integer) value) != 0;
 
 		} else {
-			throw new IllegalArgumentException(
-				"Unable to convert " + (value == null ? "null" : value.getClass().getName()) + " to boolean.");
+			//throw new IllegalArgumentException("Unable to convert " + (value == null ? "null" : value.getClass().getName()) + " to boolean.");
+			// phobeous-2020.12.12: in Javascript null yields to false and !null yields to true
+			return value != null;
 		}
 	}
 
