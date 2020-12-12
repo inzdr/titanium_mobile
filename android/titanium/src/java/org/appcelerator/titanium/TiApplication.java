@@ -51,6 +51,7 @@ import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.appcelerator.titanium.util.TiPlatformHelper;
 
 /**
  * The main application entry point for all Titanium applications and services.
