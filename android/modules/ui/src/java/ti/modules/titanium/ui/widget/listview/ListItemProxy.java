@@ -263,6 +263,9 @@ public class ListItemProxy extends TiViewProxy
 									payload.put(TiC.PROPERTY_ITEM_INDEX, getIndexInSection());
 								}
 
+								// 2020.12.15 - phobeous : let's add event name
+								payload.put(TiC.EVENT_PROPERTY_TYPE, eventName);
+
 								final String itemId = getProperties().optString(TiC.PROPERTY_ITEM_ID, null);
 								if (itemId != null) {
 
