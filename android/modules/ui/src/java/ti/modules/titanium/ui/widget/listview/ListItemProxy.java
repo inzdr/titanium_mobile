@@ -129,6 +129,7 @@ public class ListItemProxy extends TiViewProxy
 	 */
 	public Object handleEvent(String eventName, Object data, boolean fireItemClick)
 	{
+		Log.i(TAG, "phobeous::handleEvent -> eventName: " + eventName);
 		// Inject row data into events.
 		final ListViewProxy listViewProxy = getListViewProxy();
 		if (listViewProxy != null) {
@@ -265,6 +266,8 @@ public class ListItemProxy extends TiViewProxy
 
 			// Iterate through template events.
 			for (final String eventName : events.keySet()) {
+				Log.i(TAG, "phobeous::generateViewFromTemplate -> setting callback for event : "
+					+ eventName);
 				final V8Function callback = (V8Function) events.get(eventName);
 				final KrollProxy proxy = parent;
 				final KrollObject krollObject = parent.getKrollObject();
@@ -276,21 +279,30 @@ public class ListItemProxy extends TiViewProxy
 					@Override
 					public void call(Object data)
 					{
-						if (data instanceof KrollDict) {
-							final KrollDict payload = new KrollDict((KrollDict) data);
+						Log.i(TAG, "phobeous::generateViewFromTemplate -> eventName: " + eventName);
+						Log.i(TAG, "phobeous::generateViewFromTemplate -> data: "
+							+ (data != null ? "NOT NULL" : "NULL"));
+						if (data instanceof KrollDict || data instanceof HashMap) {
+							final KrollDict payload = data instanceof KrollDict
+								?	new KrollDict((KrollDict) data)
+								:	new KrollDict((HashMap) data);
 
 							// Inject row data into events.
 							final ListViewProxy listViewProxy = getListViewProxy();
 							if (listViewProxy != null) {
-
 								final Object parent = getParent();
 								if (parent instanceof ListSectionProxy) {
+									Log.i(TAG, "phobeous::generateViewFromTemplate -> parent for " + eventName
+										+ " is ListSectionProxy");
 									final ListSectionProxy section = (ListSectionProxy) parent;
 
 									// Include section specific properties.
 									payload.put(TiC.PROPERTY_SECTION, section);
 									payload.put(TiC.PROPERTY_SECTION_INDEX, listViewProxy.getIndexOfSection(section));
 									payload.put(TiC.PROPERTY_ITEM_INDEX, getIndexInSection());
+								} else {
+									Log.i(TAG, "phobeous::generateViewFromTemplate -> parent for "
+										+ eventName + " is " + parent.getClass().getName());
 								}
 
 								// 2020.12.15 - phobeous : let's add event name
@@ -308,9 +320,16 @@ public class ListItemProxy extends TiViewProxy
 									// Include `bindId` of template if specified.
 									payload.put(TiC.PROPERTY_BIND_ID, template.getString(TiC.PROPERTY_BIND_ID));
 								}
+							} else {
+								Log.i(TAG, "phobeous::generateViewFromTemplate -> "
+									+ "listViewProxy is NULL");
 							}
 
 							data = payload;
+						} else {
+							Log.i(TAG, "phobeous::generateViewFromTemplate -> "
+									+ "data is not a KrollDict, is "
+									+ data.getClass().getName());
 						}
 
 						// Call callback defined in template.
