@@ -127,7 +127,7 @@ public class ListItemProxy extends TiViewProxy
 	 */
 	public Object handleEvent(String eventName, Object data)
 	{
-		Log.i(TAG, "phobeous::handleEvent -> eventName: " + eventName);
+		// Log.i(TAG, "phobeous::handleEvent -> eventName: " + eventName);
 		// Inject row data into events.
 		final ListViewProxy listViewProxy = getListViewProxy();
 		if (listViewProxy != null) {
