@@ -53,6 +53,9 @@ public class TiLoadImageManager implements Handler.Callback
 
 	public void load(TiDrawableReference imageref, TiLoadImageListener listener)
 	{
+		if (imageref == null) {
+			return;
+		}
 		int hash = imageref.hashCode();
 		ArrayList<SoftReference<TiLoadImageListener>> listenerList = null;
 		synchronized (listeners)
