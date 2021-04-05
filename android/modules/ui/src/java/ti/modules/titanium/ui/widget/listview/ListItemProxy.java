@@ -44,7 +44,7 @@ public class ListItemProxy extends TiViewProxy
 
 	private final HashMap<String, TiViewProxy> binds = new HashMap<>();
 	private final HashMap<String, Object> childProperties = new HashMap<>();
-	private  final List<String> ignoredTemplateKeys = new ArrayList<>();
+	private final List<String> ignoredTemplateKeys = new ArrayList<>();
 
 	public int index;
 
@@ -125,7 +125,7 @@ public class ListItemProxy extends TiViewProxy
 	 * @param data      Data payload of fired event.
 	 * @return Object of event payload.
 	 */
-	public Object handleEvent(String eventName, Object data)
+	public Object handleEvent(String eventName, Object data, boolean fireItemClick)
 	{
 		// Log.i(TAG, "phobeous::handleEvent -> eventName: " + eventName);
 		// Inject row data into events.
@@ -147,7 +147,7 @@ public class ListItemProxy extends TiViewProxy
 				payload.put(TiC.PROPERTY_ITEM_INDEX, getIndexInSection());
 			}
 
-			final String itemId = getProperties().optString(TiC.PROPERTY_ITEM_ID, null);
+			final Object itemId = getProperties().get(TiC.PROPERTY_ITEM_ID);
 			if (itemId != null) {
 
 				// Include `itemId` if specified.
@@ -178,7 +178,7 @@ public class ListItemProxy extends TiViewProxy
 			data = payload;
 
 			// Fire `itemclick` event on ListView.
-			if (eventName.equals(TiC.EVENT_CLICK)) {
+			if (fireItemClick && eventName.equals(TiC.EVENT_CLICK)) {
 				listViewProxy.fireSyncEvent(TiC.EVENT_ITEM_CLICK, data);
 			}
 		}
@@ -197,13 +197,13 @@ public class ListItemProxy extends TiViewProxy
 	@Override
 	public boolean fireEvent(String eventName, Object data, boolean bubbles)
 	{
-		data = handleEvent(eventName, data);
+		data = handleEvent(eventName, data, true);
 		return super.fireEvent(eventName, data, bubbles);
 	}
 	@Override
 	public boolean fireSyncEvent(String eventName, Object data, boolean bubbles)
 	{
-		data = handleEvent(eventName, data);
+		data = handleEvent(eventName, data, true);
 		return super.fireSyncEvent(eventName, data, bubbles);
 	}
 
@@ -334,7 +334,7 @@ public class ListItemProxy extends TiViewProxy
 						}
 
 						// Call callback defined in template.
-						callback.call(krollObject, new Object[] { data });
+						callback.call(krollObject, new Object[] { handleEvent(eventName, data, false) });
 					}
 				});
 				krollObject.setHasListenersForEventType(eventName, true);

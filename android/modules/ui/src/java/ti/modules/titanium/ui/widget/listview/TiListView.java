@@ -260,14 +260,20 @@ public class TiListView extends TiSwipeRefreshLayout implements OnSearchChangeLi
 			final int firstVisibleItemIndex = firstVisibleProxy.getIndexInSection();
 			payload.put(TiC.PROPERTY_FIRST_VISIBLE_ITEM_INDEX, firstVisibleItemIndex);
 
-			// Obtain first visible section proxy. 2021.01.28 - phobeous: ensure casting
-			final TiViewProxy firstVisibleSection = firstVisibleProxy.getParent();
-			if (firstVisibleSection instanceof ListSectionProxy) {
-				payload.put(TiC.PROPERTY_FIRST_VISIBLE_SECTION, (ListSectionProxy) firstVisibleSection);
-				
+			// Obtain first visible section proxy.
+			final TiViewProxy firstVisibleParentProxy = firstVisibleProxy.getParent();
+			if (firstVisibleParentProxy instanceof ListSectionProxy) {
+				final ListSectionProxy firstVisibleSection = (ListSectionProxy) firstVisibleParentProxy;
+				payload.put(TiC.PROPERTY_FIRST_VISIBLE_SECTION, firstVisibleSection);
+
 				// Obtain first visible section index.
-				final int firstVisibleSectionIndex = proxy.getIndexOfSection((ListSectionProxy) firstVisibleSection);
+				final int firstVisibleSectionIndex = proxy.getIndexOfSection(firstVisibleSection);
 				payload.put(TiC.PROPERTY_FIRST_VISIBLE_SECTION_INDEX, firstVisibleSectionIndex);
+			} else {
+
+				// Could not obtain section, mark as undefined.
+				payload.put(TiC.PROPERTY_FIRST_VISIBLE_SECTION, null);
+				payload.put(TiC.PROPERTY_FIRST_VISIBLE_SECTION_INDEX, -1);
 			}
 		}
 
