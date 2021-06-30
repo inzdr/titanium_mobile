@@ -276,6 +276,43 @@ public class ListItemProxy extends TiViewProxy
 					@Override
 					public void call(Object data)
 					{
+						if (data instanceof KrollDict) {
+							final KrollDict payload = new KrollDict((KrollDict) data);
+
+							// Inject row data into events.
+							final ListViewProxy listViewProxy = getListViewProxy();
+							if (listViewProxy != null) {
+
+								final Object parent = getParent();
+								if (parent instanceof ListSectionProxy) {
+									final ListSectionProxy section = (ListSectionProxy) parent;
+
+									// Include section specific properties.
+									payload.put(TiC.PROPERTY_SECTION, section);
+									payload.put(TiC.PROPERTY_SECTION_INDEX, listViewProxy.getIndexOfSection(section));
+									payload.put(TiC.PROPERTY_ITEM_INDEX, getIndexInSection());
+								}
+
+								// 2020.12.15 - phobeous : let's add event name
+								payload.put(TiC.EVENT_PROPERTY_TYPE, eventName);
+
+								final String itemId = getProperties().optString(TiC.PROPERTY_ITEM_ID, null);
+								if (itemId != null) {
+
+									// Include `itemId` if specified.
+									payload.put(TiC.PROPERTY_ITEM_ID, itemId);
+								}
+
+								if (template.containsKey(TiC.PROPERTY_BIND_ID)) {
+
+									// Include `bindId` of template if specified.
+									payload.put(TiC.PROPERTY_BIND_ID, template.getString(TiC.PROPERTY_BIND_ID));
+								}
+							}
+
+							data = payload;
+						}
+
 						// Call callback defined in template.
 						callback.call(krollObject, new Object[] { handleEvent(eventName, data, false) });
 					}
