@@ -434,7 +434,58 @@ public class ListViewProxy extends RecyclerViewProxy
 	 */
 	public void handleMarkers()
 	{
-		final TiListView listView = getListView();
+		if (item != null) {
+			final Object parent = item.getParent();
+
+			if (parent instanceof ListSectionProxy) {
+				final ListSectionProxy section = (ListSectionProxy) parent;
+				final int sectionIndex = getIndexOfSection(section);
+
+				if (markers.containsKey(sectionIndex)) {
+
+					// Found marker for current section.
+					final Set<Integer> itemIndexSet = markers.get(sectionIndex);
+
+					final TiListView listView = getListView();
+					if (listView == null) {
+						return;
+					}
+					final RecyclerView recyclerView = listView.getRecyclerView();
+					if (recyclerView == null) {
+						return;
+					}
+					final LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
+					if (layoutManager == null) {
+						return;
+					}
+
+					// Loop through markers for current section and determine visibility.
+					// Some items may not have scrolled into view.
+					for (Iterator<Integer> i = itemIndexSet.iterator(); i.hasNext();) {
+						final Integer index = i.next();
+
+						final ListItemProxy markedItem = section.getListItemAt(index);
+						if (markedItem == null) {
+							continue;
+						}
+						final ListViewHolder markedHolder = markedItem.getHolder();
+						if (markedHolder == null) {
+							continue;
+						}
+						final View markedItemView = markedHolder.itemView;
+						if (markedItemView == null) {
+							continue;
+						}
+						boolean m_isVisible = false;
+						try {
+							m_isVisible = layoutManager.isViewPartiallyVisible(markedItemView, false, true);
+						} catch (Exception ex) {
+						}
+
+						final boolean isVisible = m_isVisible;
+
+						if (isVisible) {
+							final KrollDict data = new KrollDict();
 
 		if (markers == null || markers.isEmpty() || listView == null) {
 			return;
